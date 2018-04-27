@@ -63,7 +63,7 @@ public class ZuercherArrest {
                 .createEntities()
 
                 .addEntity( "arrestee")
-                    .to( "PenZuercherArrestee" )
+                    .to( "southdakotapeople" )
                     .entityIdGenerator( row -> row.get( "SSN") )
                     .addProperty( "nc.PersonSurName", "Last Name" )
                     .addProperty( "nc.PersonGivenName", "First Name" )
@@ -76,16 +76,16 @@ public class ZuercherArrest {
                     .addProperty( "nc.PersonEthnicity" )
                         .value( ZuercherArrest::standardEthnicity).ok()
                     .addProperty( "nc.PersonBirthDate" )
-                        .value( row -> bdHelper.parseDate( "DOB" ) ).ok()
+                        .value( row -> bdHelper.parseDate( row.getAs("DOB" ) ) ).ok()
                 .endEntity()
                 .addEntity( "incident" )
                     .to( "PenZuercherIncident")
                     .addProperty( "ol.gangactivity", "Other Gang" )
                     .addProperty( "ol.juvenilegang", "Juvenile Gang" )
                     .addProperty( "ol.datetime_start" )
-                        .value( row ->  dtHelper.parse( "Incident Start Date/Time" )).ok()
+                        .value( row ->  dtHelper.parse( row.getAs( "Incident Start Date/Time" ) )).ok()
                     .addProperty( "ol.datetime_reported" )
-                        .value( row -> dtHelper.parse( "Reported Date/Time" ) ).ok()
+                        .value( row -> dtHelper.parse( row.getAs( "Reported Date/Time" ) ) ).ok()
                     .addProperty( "publicsafety.drugspresent", "Offender(s) Used Drugs in Crime" )
                     .addProperty( "ol.alcoholincrime", "Offender(s) Used Alcohol in Crime" )
                     .addProperty( "ol.computerincrime", "Offender(s) Used Computer Equipment" )
@@ -122,7 +122,7 @@ public class ZuercherArrest {
                     .fromEntity( "arrestee" )
                     .toEntity( "incident" )
                     .addProperty( "ol.arrestdatetime" )
-                        .value( row -> dtHelper.parse( "Arrest Date/Time" ) ).ok()
+                        .value( row -> dtHelper.parse( row.getAs( "Arrest Date/Time" )) ).ok()
                     .addProperty( "nc.SubjectIdentification", "SSN" )
                     .addProperty( "person.ageatevent", "Age When Arrested" )
                 .endAssociation()
@@ -141,6 +141,14 @@ public class ZuercherArrest {
                     .entityIdGenerator( row -> row.get( "Statute/Offense" ) + row.get( "Last Name" ) + row.get("First Name")
                                         + row.get( "Middle Name" ) + row.get( "Case Number" ))
                     .addProperty( "general.stringid", "Case Number" )
+                .endAssociation()
+                .addAssociation( "appearsin" )
+                    .to( "PenZuercherAppearsin" )
+                    .fromEntity( "arrestee" )
+                    .toEntity( "courtcase" )
+                    .addProperty( "general.stringid" )
+                        .value( row -> Parsers.getAsString( row.getAs( "Case Number" )) + Parsers.getAsString( row.getAs( "Last Name" ))
+                                + Parsers.getAsString(row.getAs("First Name")) + Parsers.getAsString( row.getAs( "Middle Name" ) ) ).ok()
                 .endAssociation()
                 .addAssociation( "locatedat" )
                     .to("PenZLocatedAt")
@@ -257,7 +265,7 @@ public class ZuercherArrest {
                 //if it begins with a number, assume it's the statute #
                 if (Character.isDigit( all.charAt( 0 ) )) {
 //                String offense = Arrays.toString( splitall );    //convert array to string
-                all.replaceAll( "^[^a-zA-Z]", "" ).trim();  //remove all non-alphanumeric characters from front. Regex replaces anything except a-z, A-Z
+                all.replaceAll( "^[^a-zA-Z]*", "" ).trim();  //remove all non-alphabetic characters from front. Regex replaces anything except a-z, A-Z
 
                     //If there is a charge at the end
                     if (all.endsWith( ")" )) {
