@@ -82,7 +82,7 @@ public class ZuercherArrest {
                     .to( "PenZuercherIncident")
                     .addProperty( "ol.gangactivity", "Other Gang" )
                     .addProperty( "ol.juvenilegang", "Juvenile Gang" )
-                    .addProperty( "ol.datetime_start" )
+                    .addProperty( "ol.datetimestart" )
                         .value( row ->  dtHelper.parse( row.getAs( "Incident Start Date/Time" ) )).ok()
                     .addProperty( "ol.datetime_reported" )
                         .value( row -> dtHelper.parse( row.getAs( "Reported Date/Time" ) ) ).ok()
@@ -90,20 +90,21 @@ public class ZuercherArrest {
                     .addProperty( "ol.alcoholincrime", "Offender(s) Used Alcohol in Crime" )
                     .addProperty( "ol.computerincrime", "Offender(s) Used Computer Equipment" )
                 .endEntity()
-                .addEntity( "offense" )
-                    .to( "PenZuercherOffense" )
-                    .addProperty( "criminaljustice.offenseid" )
-                        .value( ZuercherArrest::localStatute ).ok()
-                    .addProperty( "criminaljustice.localstatute")
+                .addEntity( "charge" )
+                    .to( "PenZuercherCharge" )
+                    .addProperty( "justice.ArrestTrackingNumber" )
+                        .value( row -> row.getAs( "Case Number" ) + "|" + UUID.randomUUID().toString()).ok()                //CHECK WHAT TO PUT HERE
+                    .addProperty( "event.OffenseLocalCodeSection")
                         .value( ZuercherArrest::localStatute ).ok()
                     .addProperty( "event.OffenseLocalDescription")
                         .value( ZuercherArrest::offense ).ok()
                     .addProperty( "event.comments", "Offense Details" )
-                    .addProperty( "ol.numberofcounts", "Offense Count" )
                 .endEntity()
-                .addEntity( "courtcase" )
-                    .to( "PenZuercherCase" )
+                .addEntity( "pretrialcase" )
+                    .to( "PenZuercherPretrialCase" )
+                    .entityIdGenerator( row -> row.get("Case Number" ) )
                     .addProperty( "j.CaseNumberText", "Case Number" )
+                    .addProperty( "publicsafety.NumberOfCharges", "Offense Count" )     //CHECK W/PENN THIS IS RIGHT
                 .endEntity()
                 .addEntity( "address" )
                     .to( "PenZuercherAddress")
@@ -129,34 +130,27 @@ public class ZuercherArrest {
                 .addAssociation( "chargedwith" )
                     .to("PenZuercherchargedwith")
                     .fromEntity( "arrestee" )
-                    .toEntity( "offense" )
-                    .addProperty( "general.stringid" , "SSN")
+                    .toEntity( "charge" )
+                .entityIdGenerator( row -> row.get( "SSN" ) + row.get( "Statute/Offense" ) )
+                .addProperty( "general.stringid" , "SSN")
                     .addProperty( "event.ChargeLevel" )
                         .value( ZuercherArrest::chargeLevel ).ok()
-                .endAssociation()
-                .addAssociation( "leadsto" )
-                    .to( "PenZuercherLeadsto")
-                    .fromEntity( "offense" )
-                    .toEntity( "courtcase" )
-                    .entityIdGenerator( row -> row.get( "Statute/Offense" ) + row.get( "Last Name" ) + row.get("First Name")
-                                        + row.get( "Middle Name" ) + row.get( "Case Number" ))
-                    .addProperty( "general.stringid", "Case Number" )
                 .endAssociation()
                 .addAssociation( "appearsin" )
                     .to( "PenZuercherAppearsin" )
                     .fromEntity( "arrestee" )
-                    .toEntity( "courtcase" )
+                    .toEntity( "pretrialcase" )
                     .addProperty( "general.stringid" )
                         .value( row -> Parsers.getAsString( row.getAs( "Case Number" )) + Parsers.getAsString( row.getAs( "Last Name" ))
                                 + Parsers.getAsString(row.getAs("First Name")) + Parsers.getAsString( row.getAs( "Middle Name" ) ) ).ok()
                 .endAssociation()
-                .addAssociation( "locatedat" )
-                    .to("PenZLocatedAt")
+                .addAssociation( "livesat" )
+                    .to("PenZLivesAt")
                     .fromEntity( "arrestee" )
                     .toEntity( "address" )
-                    .addProperty( "location.address")
+                    .entityIdGenerator( row -> row.get( "SSN" ) +  getFullAddressAsString( row ) )
+                    .addProperty( "general.stringid")
                         .value( ZuercherArrest::getFulladdress ).ok()
-                    .addProperty( "nc.SubjectIdentification", "SSN" )
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -286,12 +280,40 @@ public class ZuercherArrest {
         return null;
     }
 
+
+    //if case Number and person is the same, increment offenses. For eacn Case #/person combo, get all offenses. Make array. Create new array, fill with integers.
+//    public static Integer offenseCount( Row row) {
+//        String casenumber = row.getAs( "Case Number" );
+//        if (chargeCounts.containsKey( casenumber )) {
+//
+//        }
+//        String person = row.getAs( "SSN" );
+//        String offense = row.getAs( "Statute/Offense" );
+//
+//    }
+
     public static String getFulladdress( Row row ) {
         String street = row.getAs( "Address" );
         String city = row.getAs( "City" );
         String state = row.getAs( "State" );
         String zipcode = row.getAs( "ZIP" );
 
+        if (getAddress( street, city, state, zipcode  ).isEmpty()) {
+            return "";
+        }
+        return getAddress( street, city, state, zipcode );
+    }
+
+    public static String getFullAddressAsString( Map<String, String> row ) {
+        String street = row.get( "Address" );
+        String city = row.get( "City" );
+        String state = row.get( "State" );
+        String zipcode = row.get( "ZIP" );
+
+        return getAddress( street, city, state, zipcode );
+    }
+
+    public static String getAddress( String street, String city, String state, String zipcode) {
         if ( street != null ) {
             StringBuilder address = new StringBuilder( StringUtils.defaultString( street ) );
             address.append( ", " ).append( StringUtils.defaultString( city ) ).append( ", " )
@@ -315,25 +337,6 @@ public class ZuercherArrest {
         }
         return null;
     }
-
-    //            ArrayList<String> splitall = new ArrayList<>( Arrays.asList( all.split(" ")) );
-    //                splitall.remove[ 0 ];      //removes first element, i.e. 70010
-    //
-    //           String [] checkStatuteExists = splitall.toArray(new String [splitall.size()] );  //save arraylist as array
-
-
-    //then save arraylist as a string
-    //                    StringBuilder sb = new StringBuilder ();
-    //                    for (String s : splitall)
-    //                    {
-    //                        sb.append(s);
-    ////                        sb.append( "\t" );
-    //                        return sb.toString();
-    //                    }
-
-
-
-
 
 
 }
