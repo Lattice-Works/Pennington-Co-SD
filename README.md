@@ -1,2 +1,2 @@
 # Pennington-Co-SD
-Integrations for Middlesex County.
+Integrations for Pennington County, SD.
