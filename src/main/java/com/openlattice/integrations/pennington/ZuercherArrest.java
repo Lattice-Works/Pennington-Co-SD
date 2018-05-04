@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Kim Engie &lt;kim@openlattice.com&gt;
@@ -41,18 +42,15 @@ public class ZuercherArrest {
 
         final String jwtToken = args[ 0 ];
         final String arrestsPath = args [ 1 ];
-        final String csvFlag = args [ 2 ];
 
 
-        Payload payload;
+        Payload payload = new SimplePayload( arrestsPath );
 
-        if ( csvFlag.equals( "json" )) {
-            Map<String, List<Map<String, String>>> jsonMap = ObjectMappers.getJsonMapper()
-                    .readValue( new URL( arrestsPath ), new TypeReference<Map<String, List<Map<String, String>>>>() {
-                    } );
-            payload = new SimplePayload( StreamUtil.stream( jsonMap.get( "data" ) ) );
-        }
-        else payload = new SimplePayload( arrestsPath );
+        Stream<Map<String, String>> newPayload = payload.getPayload().flatMap( rowItem -> {
+            int count = Integer.parseInt( rowItem.get( "Offense Count") );
+            return Stream.generate( () -> rowItem ).limit( count );
+        } );
+
 
 //        SimplePayload payload = new SimplePayload( arrestsPath );
 
@@ -81,6 +79,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "incident" )
                     .to( "PenZuercherIncident")
+                    .addProperty( "criminaljustice.incidentid", "Case Number" )
                     .addProperty( "ol.gangactivity", "Other Gang" )
                     .addProperty( "ol.juvenilegang", "Juvenile Gang" )
                     .addProperty( "ol.datetimestart" )
@@ -99,13 +98,15 @@ public class ZuercherArrest {
                         .value( ZuercherArrest::localStatute ).ok()
                     .addProperty( "event.OffenseLocalDescription")
                         .value( ZuercherArrest::offense ).ok()
+                    .addProperty( "ol.numberofcounts", "Offense Count" )
                     .addProperty( "event.comments", "Offense Details" )
                 .endEntity()
                 .addEntity( "pretrialcase" )
                     .to( "PenZuercherPretrialCase" )
                     .entityIdGenerator( row -> row.get("Case Number" ) )
                     .addProperty( "j.CaseNumberText", "Case Number" )
-                    .addProperty( "publicsafety.NumberOfCharges", "Offense Count" )     //CHECK W/PENN THIS IS RIGHT
+                    .addProperty( "publicsafety.ArrestDate" )
+                        .value( row -> dtHelper.parse( row.getAs( "Arrest Date/Time" )) ).ok()
                 .endEntity()
                 .addEntity( "address" )
                     .to( "PenZuercherAddress")
@@ -157,10 +158,10 @@ public class ZuercherArrest {
                 //@formatter:on
 
         Shuttle shuttle = new Shuttle( environment, jwtToken );
-        Map<Flight, Payload>  flights = new HashMap<>( 1 );
-        flights.put( arrestsflight, payload );
+        Map<Flight, Stream<Map<String, String>>>  flights = new HashMap<>( 1 );
+        flights.put( arrestsflight, newPayload );
 
-        shuttle.launchPayloadFlight( flights );
+        shuttle.launch( flights );
 
     }
 

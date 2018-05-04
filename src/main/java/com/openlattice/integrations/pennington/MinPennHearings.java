@@ -5,6 +5,7 @@ import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
 import com.openlattice.shuttle.dates.DateTimeHelper;
+import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.Payload;
 import com.openlattice.shuttle.payload.SimplePayload;
@@ -27,7 +28,7 @@ public class MinPennHearings {
 
     private static final DateTimeHelper dtHelper = new DateTimeHelper( TimeZones.America_Chicago,
             "MM/dd/yyyy" );
-    private static final DateTimeHelper tHelper = new DateTimeHelper( TimeZones.America_Chicago,
+    private static final JavaDateTimeHelper tHelper = new JavaDateTimeHelper( TimeZones.America_Chicago,
             "hh:mma" );
 
 
@@ -45,8 +46,9 @@ public class MinPennHearings {
                 .createEntities()
 
                 .addEntity( "inmate" )
-                    .to( "southdakotapeople" )              //NEED NC SUBJECTID
-                    .entityIdGenerator( row -> row.get( "InmateName" ) + row.get( "InmateDOB" ) )
+                    .to( "southdakotapeople" )
+//                    .entityIdGenerator( row -> row.get( "InmateName" ) + row.get( "InmateDOB" ) )
+                    .addProperty( "nc.SubjectIdentification", "PartyID" )
                     .addProperty( "nc.PersonBirthDate" )
                         .value( row -> dtHelper.parseDate( row.getAs("InmateDOB") )).ok()
                     .addProperty( "nc.PersonSurName" )
@@ -84,11 +86,12 @@ public class MinPennHearings {
                     .addProperty( "ol.update", "UpdateType" )
                 .endEntity()
                 .addEntity( "case" )
-                    .to( "MinPennCase")
+                    .to( "southdakotapretrialcaseprocessings")
+                    .entityIdGenerator( row -> row.get("DocketNumber" ) )
                     .addProperty( "j.CaseNumberText", "DocketNumber" )
                 .endEntity()
-                .addEntity( "courtroom" )      //using geo.address
-                    .to( "MinPennCourtroom" )
+                .addEntity( "courtroom" )
+                    .to( "MinPennCourtroom" )          //using geo.address
                     .addProperty( "location.Address", "Courtroom" )
                     .addProperty( "location.name", "Courtroom" )
                 .endEntity()
@@ -100,15 +103,19 @@ public class MinPennHearings {
                     .to( "MinPennAppearsin" )
                     .fromEntity( "inmate" )
                     .toEntity( "hearing" )
-                    .entityIdGenerator( row -> row.get( "ID" ) + row.get ("InmateName") )
+//                    .entityIdGenerator( row -> row.get( "ID" ) + row.get ("InmateName") )
+                    .entityIdGenerator( row -> row.get( "ID" ) + row.get ("PartyID") )
                     .addProperty( "general.stringid", "ID")
                     .addProperty( "nc.SubjectIdentification", "InmateName" )
+                    .addProperty( "nc.SubjectIdentification", "PartyID" )
                 .endAssociation()
-                .addAssociation( "becomes" )
-                    .to("MinPennBecomes")
+                .addAssociation( "is" )
+                    .to("MinPennIs")
+//                    .to( "MinPennBecomes" )
                     .fromEntity( "officerperson" )
                     .toEntity( "officer" )
-                    .addProperty( "nc.SubjectIdentification", "JudicialOfficer" )
+                    .entityIdGenerator( row -> row.get( "JudicialOfficer" ))
+                    .addProperty( "general.stringid", "JudicialOfficer" )
                 .endAssociation()
                 .addAssociation( "appearsin2" )
                     .to( "MinPennAppearsin" )
@@ -154,16 +161,6 @@ public class MinPennHearings {
         }
         return null;
     }
-
-//    public static String getLastNameJudge (Row row){
-//        String all = Parsers.getAsString(row.getAs( "JudicialOfficer" )).trim();
-//        if (StringUtils.isNotBlank( all )){
-//            String [] namesplit = all.split( "," );
-//            String lastname = namesplit[ 0 ];   //1st element in array is always the last name
-//            return lastname;
-//        }
-//        return null;
-//    }
 
 
     public static String getFirstName (Object obj) {
