@@ -1,23 +1,19 @@
 package com.openlattice.integrations.pennington;
 
-import com.dataloom.mappers.ObjectMappers;
-import com.dataloom.streams.StreamUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.openlattice.client.RetrofitFactory;
+import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
 import com.openlattice.shuttle.dates.DateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.Payload;
+import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.openlattice.shuttle.payload.SimplePayload;
-import com.openlattice.shuttle.Flight;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,24 +31,17 @@ public class ZuercherArrest {
     private static final DateTimeHelper dtHelper = new DateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY HH:mm" );
 
-//    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
-                                                                                                 // with anything (even nothing) in between them
+    //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
+    // with anything (even nothing) in between them
 
     public static void main( String[] args ) throws InterruptedException, IOException {
 
         final String jwtToken = args[ 0 ];
-        final String arrestsPath = args [ 1 ];
-
+        final String arrestsPath = args[ 1 ];
 
         Payload payload = new SimplePayload( arrestsPath );
 
-        Stream<Map<String, String>> newPayload = payload.getPayload().flatMap( rowItem -> {
-            int count = Integer.parseInt( rowItem.get( "Offense Count") );
-            return Stream.generate( () -> rowItem ).limit( count );
-        } );
-
-
-//        SimplePayload payload = new SimplePayload( arrestsPath );
+        //        SimplePayload payload = new SimplePayload( arrestsPath );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
@@ -92,8 +81,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "charge" )
                     .to( "PenZuercherCharge" )
-                    .addProperty( "justice.ArrestTrackingNumber" )
-                        .value( row -> row.getAs( "Case Number" ) + "|" + UUID.randomUUID().toString()).ok()                //CHECK WHAT TO PUT HERE
+                    .addProperty( "justice.ArrestTrackingNumber" ).value( ZuercherArrest::getChargeId ).ok()
                     .addProperty( "event.OffenseLocalCodeSection")
                         .value( ZuercherArrest::localStatute ).ok()
                     .addProperty( "event.OffenseLocalDescription")
@@ -158,11 +146,20 @@ public class ZuercherArrest {
                 //@formatter:on
 
         Shuttle shuttle = new Shuttle( environment, jwtToken );
-        Map<Flight, Stream<Map<String, String>>>  flights = new HashMap<>( 1 );
-        flights.put( arrestsflight, newPayload );
+        Map<Flight, Stream<Map<String, String>>> flights = new HashMap<>( 1 );
+        flights.put( arrestsflight, payload.getPayload() );
 
         shuttle.launch( flights );
 
+    }
+
+    public static String getChargeId( Row row ) {
+        String caseNumber = Parsers.getAsString( row.getAs( "Case Number" ) );
+        String personId = Parsers.getAsString( row.getAs( "PartyID" ) );
+        String statuteOffense = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        String chargeNum = Parsers.getAsString( row.getAs( "ChargeNumber" ) );
+
+        return caseNumber + "|" + personId + "|" + statuteOffense + "|" + chargeNum;
     }
 
     public static List standardRaceList( Row row ) {
@@ -221,12 +218,13 @@ public class ZuercherArrest {
 
     }
 
-    public static String localStatute( Row row ){
-        String statoff = Parsers.getAsString (row.getAs( "Statute/Offense" ));
-        if (statoff != null) {
-            String [] statutesplit = statoff.split( " ");
+    public static String localStatute( Row row ) {
+        String statoff = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        if ( statoff != null ) {
+            String[] statutesplit = statoff.split( " " );
             String statute = statutesplit[ 0 ];                //SAVE 1ST ELEMENT IN ARRAY AS A STRING
-            if (Character.isDigit( statute.charAt(0)) ) {     //if it begins with a number, assume it's the statute #
+            if ( Character
+                    .isDigit( statute.charAt( 0 ) ) ) {     //if it begins with a number, assume it's the statute #
                 return statute;
             }
             return null;
@@ -234,17 +232,17 @@ public class ZuercherArrest {
         return null;
     }
 
-
     public static String chargeLevel( Row row ) {
-        String all = Parsers.getAsString (row.getAs( "Statute/Offense" )).trim();
-        if (StringUtils.isNotBlank( all )){
-            String [] splitlevel = all.split( " " );
-            String charge = splitlevel[splitlevel.length-1];
-            charge = charge.replace( "(","" );
+        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) ).trim();
+        if ( StringUtils.isNotBlank( all ) ) {
+            String[] splitlevel = all.split( " " );
+            String charge = splitlevel[ splitlevel.length - 1 ];
+            charge = charge.replace( "(", "" );
             charge = charge.replace( ")", "" );
 
-            if (charge.startsWith( "M" ) | charge.startsWith( "F" )){
-                return charge.substring( charge.length() - 2 );    //return the last 2 characters. For cases where the last element in the array ins now, "FamilyM1", was "Family(M1)"
+            if ( charge.startsWith( "M" ) | charge.startsWith( "F" ) ) {
+                return charge.substring( charge.length()
+                        - 2 );    //return the last 2 characters. For cases where the last element in the array ins now, "FamilyM1", was "Family(M1)"
             }
             return null;
         }
@@ -253,45 +251,45 @@ public class ZuercherArrest {
 
     //split on string, get an array.
     // string 0 is statute, string 1 goes away. String length-1 is degree level, string 2-length-2 is the middle. Join on spaces (put back as string)
-    public static String offense( Row row ){
-        String all = Parsers.getAsString (row.getAs( "Statute/Offense" )).trim();
-        if (StringUtils.isNotBlank( all )) {
+    public static String offense( Row row ) {
+        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) ).trim();
+        if ( StringUtils.isNotBlank( all ) ) {
 
-                //if it begins with a number, assume it's the statute #
-                if (Character.isDigit( all.charAt( 0 ) )) {
-//                String offense = Arrays.toString( splitall );    //convert array to string
-                all.replaceAll( "^[^a-zA-Z]*", "" ).trim();  //remove all non-alphabetic characters from front. Regex replaces anything except a-z, A-Z
+            //if it begins with a number, assume it's the statute #
+            if ( Character.isDigit( all.charAt( 0 ) ) ) {
+                //                String offense = Arrays.toString( splitall );    //convert array to string
+                all.replaceAll( "^[^a-zA-Z]*", "" )
+                        .trim();  //remove all non-alphabetic characters from front. Regex replaces anything except a-z, A-Z
 
-                    //If there is a charge at the end
-                    if (all.endsWith( ")" )) {
+                //If there is a charge at the end
+                if ( all.endsWith( ")" ) ) {
                     String offense = all.substring( 0, all.length() - 4 );     //removes last 4 characters, i.e. (f1)
                     return offense;
                 }
 
-                    //if there is no charge level at the end
-                    return all;
+                //if there is no charge level at the end
+                return all;
             }
-                    //If no statute exists: same as above, but do not remove numbers from beginning
-//                    String offense = Arrays.toString( splitall );
-                String offense = all.replaceAll( "^[^a-zA-Z\\-]", "" ).trim();
-                return offense;
+            //If no statute exists: same as above, but do not remove numbers from beginning
+            //                    String offense = Arrays.toString( splitall );
+            String offense = all.replaceAll( "^[^a-zA-Z\\-]", "" ).trim();
+            return offense;
         }
         //if there is only 1 element in the array
-//        return all;}
+        //        return all;}
         return null;
     }
 
-
     //if case Number and person is the same, increment offenses. For eacn Case #/person combo, get all offenses. Make array. Create new array, fill with integers.
-//    public static Integer offenseCount( Row row) {
-//        String casenumber = row.getAs( "Case Number" );
-//        if (chargeCounts.containsKey( casenumber )) {
-//
-//        }
-//        String person = row.getAs( "SSN" );
-//        String offense = row.getAs( "Statute/Offense" );
-//
-//    }
+    //    public static Integer offenseCount( Row row) {
+    //        String casenumber = row.getAs( "Case Number" );
+    //        if (chargeCounts.containsKey( casenumber )) {
+    //
+    //        }
+    //        String person = row.getAs( "SSN" );
+    //        String offense = row.getAs( "Statute/Offense" );
+    //
+    //    }
 
     public static String getFulladdress( Row row ) {
         String street = row.getAs( "Address" );
@@ -299,7 +297,7 @@ public class ZuercherArrest {
         String state = row.getAs( "State" );
         String zipcode = row.getAs( "ZIP" );
 
-        if (getAddress( street, city, state, zipcode  ).isEmpty()) {
+        if ( getAddress( street, city, state, zipcode ).isEmpty() ) {
             return "";
         }
         return getAddress( street, city, state, zipcode );
@@ -314,7 +312,7 @@ public class ZuercherArrest {
         return getAddress( street, city, state, zipcode );
     }
 
-    public static String getAddress( String street, String city, String state, String zipcode) {
+    public static String getAddress( String street, String city, String state, String zipcode ) {
         if ( street != null ) {
             StringBuilder address = new StringBuilder( StringUtils.defaultString( street ) );
             address.append( ", " ).append( StringUtils.defaultString( city ) ).append( ", " )
@@ -322,9 +320,7 @@ public class ZuercherArrest {
                     .append( StringUtils.defaultString( zipcode ) );
 
             return address.toString();
-        }
-
-        else if ( city != null ) {
+        } else if ( city != null ) {
             StringBuilder address = new StringBuilder( StringUtils.defaultString( city ) );
             address.append( ", " ).append( StringUtils.defaultString( state ) ).append( " " )
                     .append( StringUtils.defaultString( zipcode ) );
@@ -338,6 +334,5 @@ public class ZuercherArrest {
         }
         return null;
     }
-
 
 }
