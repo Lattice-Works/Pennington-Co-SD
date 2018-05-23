@@ -2,9 +2,10 @@ package com.openlattice.integrations.pennington;
 
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.shuttle.Flight;
+import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
-import com.openlattice.shuttle.dates.DateTimeHelper;
+import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.Payload;
 import com.openlattice.shuttle.payload.SimplePayload;
@@ -24,11 +25,11 @@ import java.util.stream.Stream;
 
 public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
-    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.LOCAL;
+    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
 
-    private static final DateTimeHelper bdHelper = new DateTimeHelper( TimeZones.America_Denver,
+    private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY" );
-    private static final DateTimeHelper dtHelper = new DateTimeHelper( TimeZones.America_Denver,
+    private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY HH:mm" );
 
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
@@ -36,8 +37,10 @@ public class ZuercherArrest {
 
     public static void main( String[] args ) throws InterruptedException, IOException {
 
-        final String jwtToken = args[ 0 ];
-        final String arrestsPath = args[ 1 ];
+        final String username = args[ 0 ];
+        final String password = args[ 1 ];
+        final String arrestsPath = args[ 2 ];
+        String jwtToken = MissionControl.getIdToken( username, password );
 
         Payload payload = new SimplePayload( arrestsPath );
 
@@ -72,9 +75,9 @@ public class ZuercherArrest {
                     .addProperty( "ol.gangactivity", "Other Gang" )
                     .addProperty( "ol.juvenilegang", "Juvenile Gang" )
                     .addProperty( "ol.datetimestart" )
-                        .value( row ->  dtHelper.parse( row.getAs( "Incident Start Date/Time" ) )).ok()
+                        .value( row ->  dtHelper.parseDateTime( row.getAs( "Incident Start Date/Time" ) )).ok()
                     .addProperty( "ol.datetime_reported" )
-                        .value( row -> dtHelper.parse( row.getAs( "Reported Date/Time" ) ) ).ok()
+                        .value( row -> dtHelper.parseDateTime( row.getAs( "Reported Date/Time" ) ) ).ok()
                     .addProperty( "publicsafety.drugspresent", "Offender(s) Used Drugs in Crime" )
                     .addProperty( "ol.alcoholincrime", "Offender(s) Used Alcohol in Crime" )
                     .addProperty( "ol.computerincrime", "Offender(s) Used Computer Equipment" )
@@ -94,7 +97,7 @@ public class ZuercherArrest {
                     .entityIdGenerator( row -> row.get("Case Number" ) )
                     .addProperty( "j.CaseNumberText", "Case Number" )
                     .addProperty( "publicsafety.ArrestDate" )
-                        .value( row -> dtHelper.parse( row.getAs( "Arrest Date/Time" )) ).ok()
+                        .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
                 .endEntity()
                 .addEntity( "address" )
                     .to( "PenZuercherAddress")
@@ -113,7 +116,7 @@ public class ZuercherArrest {
                     .fromEntity( "arrestee" )
                     .toEntity( "incident" )
                     .addProperty( "ol.arrestdatetime" )
-                        .value( row -> dtHelper.parse( row.getAs( "Arrest Date/Time" )) ).ok()
+                        .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
                     .addProperty( "nc.SubjectIdentification", "PartyID" )
                     .addProperty( "person.ageatevent", "Age When Arrested" )
                 .endAssociation()
