@@ -5,6 +5,7 @@ import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
+import com.openlattice.shuttle.dates.DateTimeHelper;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.Payload;
@@ -27,10 +28,10 @@ public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
 
-    private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
+    private static final DateTimeHelper bdHelper = new DateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY" );
     private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
-            "MM/dd/YY HH:mm" );
+            "MM/dd/yy HH:mm" );
 
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
     // with anything (even nothing) in between them
