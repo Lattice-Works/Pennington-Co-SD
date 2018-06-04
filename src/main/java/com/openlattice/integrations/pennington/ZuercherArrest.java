@@ -101,7 +101,7 @@ public class ZuercherArrest {
                     .useCurrentSync()
                     .entityIdGenerator( row -> row.get("Case Number" ) )
                     .addProperty( "j.CaseNumberText", "Case Number" )
-                    .addProperty( "publicsafety.ArrestDate" )
+                    .addProperty( "ol.arrestdatetime" )
                         .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
                 .endEntity()
                 .addEntity( "address" )
@@ -246,8 +246,9 @@ public class ZuercherArrest {
     }
 
     public static String chargeLevel( Row row ) {
-        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) ).trim();
-        if ( StringUtils.isNotBlank( all ) ) {
+        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        if ( StringUtils.isNotBlank( all ) && StringUtils.isNotBlank( all.trim() ) ) {
+            all = all.trim();
             String[] splitlevel = all.split( " " );
             String charge = splitlevel[ splitlevel.length - 1 ];
             charge = charge.replace( "(", "" );
@@ -265,8 +266,9 @@ public class ZuercherArrest {
     //split on string, get an array.
     // string 0 is statute, string 1 goes away. String length-1 is degree level, string 2-length-2 is the middle. Join on spaces (put back as string)
     public static String offense( Row row ) {
-        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) ).trim();
-        if ( StringUtils.isNotBlank( all ) ) {
+        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        if ( StringUtils.isNotBlank( all ) && StringUtils.isNotBlank( all.trim() ) ) {
+            all = all.trim();
 
             //if it begins with a number, assume it's the statute #
             if ( Character.isDigit( all.charAt( 0 ) ) ) {
