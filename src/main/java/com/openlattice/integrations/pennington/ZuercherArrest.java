@@ -273,9 +273,8 @@ public class ZuercherArrest {
             String divider = " - ";
             int index = offenseStr.indexOf( divider );
             if ( index >= 0 ) {
-                index = index + divider.length();
+                offenseStr = offenseStr.substring( index + divider.length() ).trim();
             }
-            offenseStr = offenseStr.substring( index ).trim();
             return offenseStr;
         }
         return null;
