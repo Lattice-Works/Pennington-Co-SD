@@ -266,32 +266,17 @@ public class ZuercherArrest {
     //split on string, get an array.
     // string 0 is statute, string 1 goes away. String length-1 is degree level, string 2-length-2 is the middle. Join on spaces (put back as string)
     public static String offense( Row row ) {
-        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
-        if ( StringUtils.isNotBlank( all ) && StringUtils.isNotBlank( all.trim() ) ) {
-            all = all.trim();
+        String offenseStr = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        if ( StringUtils.isNotBlank( offenseStr ) && StringUtils.isNotBlank( offenseStr.trim() ) ) {
+            offenseStr = offenseStr.trim();
 
-            //if it begins with a number, assume it's the statute #
-            if ( Character.isDigit( all.charAt( 0 ) ) ) {
-                //                String offense = Arrays.toString( splitall );    //convert array to string
-                all.replaceAll( "^[^a-zA-Z]*", "" )
-                        .trim();  //remove all non-alphabetic characters from front. Regex replaces anything except a-z, A-Z
-
-                //If there is a charge at the end
-                if ( all.endsWith( ")" ) ) {
-                    String offense = all.substring( 0, all.length() - 4 );     //removes last 4 characters, i.e. (f1)
-                    return offense;
-                }
-
-                //if there is no charge level at the end
-                return all;
+            String divider = " - ";
+            int index = offenseStr.indexOf( divider );
+            if ( index >= 0 ) {
+                offenseStr = offenseStr.substring( index + divider.length() ).trim();
             }
-            //If no statute exists: same as above, but do not remove numbers from beginning
-            //                    String offense = Arrays.toString( splitall );
-            String offense = all.replaceAll( "^[^a-zA-Z\\-]", "" ).trim();
-            return offense;
+            return offenseStr;
         }
-        //if there is only 1 element in the array
-        //        return all;}
         return null;
     }
 
