@@ -126,6 +126,7 @@ public class ZuercherArrest {
                         .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
                     .addProperty( "nc.SubjectIdentification", "PartyID" )
                     .addProperty( "person.ageatevent", "Age When Arrested" )
+                    .addProperty( "criminaljustice.arrestagency", "Abbreviation" )
                 .endAssociation()
                 .addAssociation( "chargedwith" )
                     .to("PenZuercherchargedwith")
