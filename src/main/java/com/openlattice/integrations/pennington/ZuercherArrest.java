@@ -103,6 +103,8 @@ public class ZuercherArrest {
                     .addProperty( "j.CaseNumberText", "Case Number" )
                     .addProperty( "ol.arrestdatetime" )
                         .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
+                    .addProperty( "publicsafety.NumberOfCharges" ).value( row -> Parsers.parseInt( row.getAs( "ChargeCount" ) ) ).ok()
+                    .addProperty( "criminaljustice.arrestagency", "Abbreviation" )
                 .endEntity()
                 .addEntity( "address" )
                     .to( "PenZuercherAddress")
