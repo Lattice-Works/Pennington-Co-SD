@@ -36,7 +36,7 @@ public class ZuercherArrest {
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
     // with anything (even nothing) in between them
 
-    public static void main( String[] args ) throws InterruptedException, IOException {
+    public static void integrate( String[] args ) throws InterruptedException, IOException {
 
         final String username = args[ 0 ];
         final String password = args[ 1 ];

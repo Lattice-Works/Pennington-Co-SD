@@ -31,7 +31,7 @@ description = "pennington SD Integrations"
 group = "com.openlattice"
 version = 'v0.0.1'
 
-mainClassName = "com.openlattice.integrations.pennington.MinPennHearings"
+mainClassName = "com.openlattice.integrations.pennington.IntegrationRunner"
 applicationDefaultJvmArgs = ["-Xmx1G", "-Xms1G", "-server"]
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
