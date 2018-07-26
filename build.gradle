@@ -33,8 +33,8 @@ version = 'v0.0.1'
 
 mainClassName = "com.openlattice.integrations.pennington.IntegrationRunner"
 applicationDefaultJvmArgs = ["-Xmx1G", "-Xms1G", "-server"]
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_10
+targetCompatibility = JavaVersion.VERSION_1_10
 
 run {
     if (System.getProperty("exec.args")) {
@@ -82,8 +82,8 @@ startScripts {
 eclipse {
     ext.downloadSources = true
     ext.downloadJavadoc = true
-    ext.sourceCompatibility = JavaVersion.VERSION_1_8
-    ext.targetCompatibility = JavaVersion.VERSION_1_8
+    ext.sourceCompatibility = JavaVersion.VERSION_1_10
+    ext.targetCompatibility = JavaVersion.VERSION_1_10
 }
 
 eclipse.classpath.plusConfigurations += [configurations.provided]
