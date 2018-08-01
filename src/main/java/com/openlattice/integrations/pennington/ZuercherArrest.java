@@ -257,7 +257,7 @@ public class ZuercherArrest {
             charge = charge.replace( "(", "" );
             charge = charge.replace( ")", "" );
 
-            if ( charge.startsWith( "M" ) || charge.startsWith( "F" ) && charge.length() > 1 ) {
+            if ( ( charge.startsWith( "M" ) || charge.startsWith( "F" ) ) && charge.length() > 1 ) {
                 return charge.substring( charge.length()
                         - 2 );    //return the last 2 characters. For cases where the last element in the array ins now, "FamilyM1", was "Family(M1)"
             }
