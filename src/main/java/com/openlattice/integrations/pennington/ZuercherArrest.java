@@ -28,7 +28,7 @@ public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
 
-    private static final DateTimeHelper bdHelper = new DateTimeHelper( TimeZones.America_Denver,
+    private static final DateTimeHelper     bdHelper = new DateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY" );
     private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
             "MM/dd/yy HH:mm" );
@@ -257,7 +257,7 @@ public class ZuercherArrest {
             charge = charge.replace( "(", "" );
             charge = charge.replace( ")", "" );
 
-            if ( charge.startsWith( "M" ) | charge.startsWith( "F" ) ) {
+            if ( ( charge.startsWith( "M" ) || charge.startsWith( "F" ) ) && charge.length() > 1 ) {
                 return charge.substring( charge.length()
                         - 2 );    //return the last 2 characters. For cases where the last element in the array ins now, "FamilyM1", was "Family(M1)"
             }
