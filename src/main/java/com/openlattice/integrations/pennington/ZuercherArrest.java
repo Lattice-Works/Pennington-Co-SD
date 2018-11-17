@@ -58,6 +58,7 @@ public class ZuercherArrest {
                     .useCurrentSync()
                     .addProperty( "nc.SSN", "SSN" )
                     .addProperty( "nc.SubjectIdentification", "PartyID" )
+                    .addProperty( "justice.xref", "Jacket number" )
                     .addProperty( "nc.PersonSurName", "Last Name" )
                     .addProperty( "nc.PersonGivenName", "First Name" )
                     .addProperty( "nc.PersonMiddleName", "Middle Name" )
