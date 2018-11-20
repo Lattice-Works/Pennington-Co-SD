@@ -100,8 +100,8 @@ public class ZuercherArrest {
                 .addEntity( "pretrialcase" )
                     .to( "PenZuercherPretrialCase" )
                     .useCurrentSync()
-                    .entityIdGenerator( row -> row.get("Case Number" ) )
-                    .addProperty( "j.CaseNumberText", "Case Number" )
+                    .entityIdGenerator( row -> row.get("Arrest Transaction number" ) )
+                    .addProperty( "j.CaseNumberText", "Arrest Transaction number" )
                     .addProperty( "ol.arrestdatetime" )
                         .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
                     .addProperty( "publicsafety.NumberOfCharges" ).value( row -> Parsers.parseInt( row.getAs( "ChargeCount" ) ) ).ok()
@@ -147,7 +147,7 @@ public class ZuercherArrest {
                     .fromEntity( "arrestee" )
                     .toEntity( "pretrialcase" )
                     .addProperty( "general.stringid" )
-                        .value( row -> Parsers.getAsString( row.getAs( "Case Number" )) + Parsers.getAsString( row.getAs( "PartyID" )) ).ok()
+                        .value( row -> Parsers.getAsString( row.getAs( "Arrest Transaction number" )) + Parsers.getAsString( row.getAs( "PartyID" )) ).ok()
                 .endAssociation()
                 .addAssociation( "livesat" )
                     .to("PenZLivesAt")
@@ -171,7 +171,7 @@ public class ZuercherArrest {
     }
 
     public static String getChargeId( Row row ) {
-        String caseNumber = Parsers.getAsString( row.getAs( "Case Number" ) );
+        String caseNumber = Parsers.getAsString( row.getAs( "Arrest Transaction number" ) );
         String personId = Parsers.getAsString( row.getAs( "PartyID" ) );
         String statuteOffense = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
         String chargeNum = Parsers.getAsString( row.getAs( "ChargeNumber" ) );
