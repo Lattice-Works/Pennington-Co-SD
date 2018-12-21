@@ -102,7 +102,7 @@ public class ZuercherArrest {
                     .useCurrentSync()
                     .entityIdGenerator( row -> Parsers.getAsString( row.get("Arrest Transaction number" ) ) )
                     .addProperty( "j.CaseNumberText").value( row -> Parsers.getAsString( row.getAs("Arrest Transaction number" ) ) ).ok()
-                    .addProperty( "ol.name", "Case_Number" )
+                    .addProperty( "ol.name", "Case Number" )
                     .addProperty( "ol.arrestdatetime" )
                         .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
                     .addProperty( "publicsafety.NumberOfCharges" ).value( row -> Parsers.parseInt( row.getAs( "ChargeCount" ) ) ).ok()
