@@ -33,15 +33,19 @@ public class MinPennHearings {
     private static final JavaDateTimeHelper minnDTHelper    = new JavaDateTimeHelper( TimeZones.America_Chicago,
             dateTimePattern );
 
+    private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver, "MM/dd/yyyy" );
+
     private static final String CASE_ALIAS    = "case";
     private static final String HEARING_ALIAS = "hearing";
     private static final String JUDGE_ALIAS   = "judge";
+    private static final String PERSON_ALIAS  = "person";
 
     private static final String CASE_ENTITY_SET       = "southdakotapretrialcaseprocessings";
     private static final String HEARING_ENTITY_SET    = "southdakotahearings";
     private static final String JUDGE_ENTITY_SET      = "southdakotajudges";
     private static final String APPEARS_IN_ENTITY_SET = "southdakotaappearsin";
     private static final String OVERSEES_ENTITY_SET   = "southdakotaoversees";
+    private static final String PEOPLE_ENTITY_SET     = "southdakotapeople";
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
 
@@ -82,6 +86,16 @@ public class MinPennHearings {
                     .entityIdGenerator( row -> row.get("DocketNumber" ) )
                     .addProperty( "j.CaseNumberText", "DocketNumber" )
                 .endEntity()
+                .addEntity( PERSON_ALIAS )
+                    .to( PEOPLE_ENTITY_SET )
+                    .useCurrentSync()
+                    .addProperty( "nc.SubjectIdentification", "PartyID" )
+                    .addProperty( "nc.PersonGivenName", "InmateFName" )
+                    .addProperty( "nc.PersonSurName", "InmateLName" )
+                    .addProperty( "nc.PersonMiddleName", "InmateMidName" )
+                    .addProperty( "nc.PersonSuffix", "InmateSfxName" )
+                    .addProperty( "nc.PersonBirthDate" ).value( row -> bdHelper.parseDate( row.getAs( "InmateDOB" ) ) ).ok()
+                .endEntity()
 
                 .endEntities()
                 .createAssociations()
@@ -107,6 +121,13 @@ public class MinPennHearings {
                     .toEntity( CASE_ALIAS )
                     .addProperty( "general.stringid" )
                         .value( row -> Parsers.getAsString( row.getAs( "DocketNumber" ) ) + Parsers.getAsString( row.getAs( "ID" ) ) ).ok()
+                .endAssociation()
+                .addAssociation( "appearsInHearing" )
+                    .useCurrentSync()
+                    .to( APPEARS_IN_ENTITY_SET )
+                    .fromEntity( PERSON_ALIAS )
+                    .toEntity( HEARING_ALIAS )
+                    .addProperty( "general.stringid" ).value( row -> Parsers.getAsString( row.getAs( "DocketNumber" ) ) + Parsers.getAsString( row.getAs( "PartyID" ) ) ).ok()
                 .endAssociation()
 
                 .endAssociations()
