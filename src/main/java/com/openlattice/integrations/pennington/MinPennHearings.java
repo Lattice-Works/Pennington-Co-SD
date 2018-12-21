@@ -127,7 +127,7 @@ public class MinPennHearings {
                     .to( APPEARS_IN_ENTITY_SET )
                     .fromEntity( PERSON_ALIAS )
                     .toEntity( HEARING_ALIAS )
-                    .addProperty( "general.stringid" ).value( row -> Parsers.getAsString( row.getAs( "DocketNumber" ) ) + Parsers.getAsString( row.getAs( "PartyID" ) ) ).ok()
+                    .addProperty( "general.stringid" ).value( row -> Parsers.getAsString( row.getAs( "ID" ) ) + "|" + Parsers.getAsString( row.getAs( "PartyID" ) ) ).ok()
                 .endAssociation()
 
                 .endAssociations()
