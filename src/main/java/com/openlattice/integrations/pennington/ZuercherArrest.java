@@ -62,6 +62,7 @@ public class ZuercherArrest {
                     .addProperty( "nc.PersonSurName", "Last Name" )
                     .addProperty( "nc.PersonGivenName", "First Name" )
                     .addProperty( "nc.PersonMiddleName", "Middle Name" )
+                    .addProperty( "im.PersonNickName" ).value( row -> row.getAs( "Aliases" ).toString().split( "|" ) ).ok()
                     .addProperty( "nc.SSN", "SSN" )
                     .addProperty( "nc.PersonRace" )
                         .value( ZuercherArrest::standardRaceList).ok()
