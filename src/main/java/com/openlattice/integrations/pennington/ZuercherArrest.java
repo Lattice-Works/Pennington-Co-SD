@@ -1,5 +1,6 @@
 package com.openlattice.integrations.pennington;
 
+import com.google.common.collect.Lists;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
@@ -172,10 +173,10 @@ public class ZuercherArrest {
 
     }
 
-    public static String[] getAliases( Row row ) {
+    public static List<String> getAliases( Row row ) {
         String aliases = Parsers.getAsString( row.getAs( "Aliases" ) );
         if ( StringUtils.isNotBlank( aliases ) ) {
-            return aliases.split( "|" );
+            return Lists.newArrayList( aliases.split( "|" ) );
         }
 
         return null;
