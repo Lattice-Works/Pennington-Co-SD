@@ -176,7 +176,7 @@ public class ZuercherArrest {
     public static List<String> getAliases( Row row ) {
         String aliases = Parsers.getAsString( row.getAs( "Aliases" ) );
         if ( StringUtils.isNotBlank( aliases ) ) {
-            return Lists.newArrayList( aliases.split( "|" ) );
+            return Lists.newArrayList( aliases.split( "\\|" ) );
         }
 
         return null;
