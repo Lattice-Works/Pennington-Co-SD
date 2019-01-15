@@ -125,9 +125,9 @@ public class ZuercherArrest {
                 .addEntity( "contactInfo" )
                     .to( CONTACT_INFO_NAME )
                     .useCurrentSync()
-                    .addProperty( "general.id", "Cell" )
-                    .addProperty( "contact.phonenumber", "Cell" )
-                    .addProperty( "contact.cellphone" ).value( row -> StringUtils.isBlank( row.getAs( "Cell" ) ) ? null : true ).ok()
+                    .addProperty( "general.id", "Phone" )
+                    .addProperty( "contact.phonenumber", "Phone" )
+                    .addProperty( "contact.cellphone", "isMobile" )
                     .addProperty( "ol.preferred", "preferred" )
                 .endEntity()
 
