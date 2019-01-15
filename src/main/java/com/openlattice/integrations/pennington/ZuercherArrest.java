@@ -34,6 +34,9 @@ public class ZuercherArrest {
     private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
             "MM/dd/yy HH:mm" );
 
+    private static final String CONTACT_INFO_NAME       = "southdakotacontactinformation";
+    private static final String CONTACT_INFO_GIVEN_NAME = "southdakotacontactinfogiven";
+
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
     // with anything (even nothing) in between them
 
@@ -119,6 +122,14 @@ public class ZuercherArrest {
                     .addProperty( "location.state", "State" )
                     .addProperty( "location.zip", "ZIP")
                 .endEntity()
+                .addEntity( "contactInfo" )
+                    .to( CONTACT_INFO_NAME )
+                    .useCurrentSync()
+                    .addProperty( "general.id", "Cell" )
+                    .addProperty( "contact.phonenumber", "Cell" )
+                    .addProperty( "contact.cellphone" ).value( row -> StringUtils.isBlank( row.getAs( "Cell" ) ) ? null : true ).ok()
+                    .addProperty( "ol.preferred", "preferred" )
+                .endEntity()
 
                 .endEntities()
                 .createAssociations()
@@ -160,6 +171,13 @@ public class ZuercherArrest {
                     .entityIdGenerator( row -> row.get( "PartyID" ) +  getFullAddressAsString( row ) )
                     .addProperty( "general.stringid")
                         .value( ZuercherArrest::getFulladdress ).ok()
+                .endAssociation()
+                .addAssociation( "hasContact" )
+                    .to( CONTACT_INFO_GIVEN_NAME )
+                    .useCurrentSync()
+                    .fromEntity( "arrestee" )
+                    .toEntity( "contactInfo" )
+                    .addProperty( "ol.id", "Cell" )
                 .endAssociation()
                 .endAssociations()
                 .done();
