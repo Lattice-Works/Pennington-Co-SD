@@ -177,7 +177,7 @@ public class ZuercherArrest {
                     .useCurrentSync()
                     .fromEntity( "arrestee" )
                     .toEntity( "contactInfo" )
-                    .addProperty( "ol.id", "Cell" )
+                    .addProperty( "ol.id", "Phone" )
                 .endAssociation()
                 .endAssociations()
                 .done();
