@@ -1,7 +1,9 @@
 package com.openlattice.integrations.pennington;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.openlattice.client.RetrofitFactory;
+import com.openlattice.data.UpdateType;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
@@ -59,7 +61,7 @@ public class ZuercherArrest {
 
                 .addEntity( "arrestee")
                     .to( "southdakotapeople" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Merge )
                     .addProperty( "nc.SSN", "SSN" )
                     .addProperty( "nc.SubjectIdentification", "PartyID" )
                     .addProperty( "justice.xref", "Jacket number" )
@@ -79,7 +81,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "incident" )
                     .to( "PenZuercherIncident")
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .addProperty( "criminaljustice.incidentid", "Case Number" )
                     .addProperty( "ol.gangactivity", "Other Gang" )
                     .addProperty( "ol.juvenilegang", "Juvenile Gang" )
@@ -93,7 +95,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "charge" )
                     .to( "PenZuercherCharge" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .addProperty( "justice.ArrestTrackingNumber" ).value( ZuercherArrest::getChargeId ).ok()
                     .addProperty( "event.OffenseLocalCodeSection")
                         .value( ZuercherArrest::localStatute ).ok()
@@ -104,7 +106,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "pretrialcase" )
                     .to( "PenZuercherPretrialCase" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .entityIdGenerator( row -> Parsers.getAsString( row.get("Arrest Transaction number" ) ) )
                     .addProperty( "j.CaseNumberText").value( row -> Parsers.getAsString( row.getAs("Arrest Transaction number" ) ) ).ok()
                     .addProperty( "ol.name", "Case Number" )
@@ -115,7 +117,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "address" )
                     .to( "PenZuercherAddress")
-                    .useCurrentSync()
+                    .updateType( UpdateType.Merge )
                     .addProperty( "location.Address")
                         .value( ZuercherArrest::getFulladdress ).ok()
                     .addProperty( "location.city", "City" )
@@ -124,7 +126,7 @@ public class ZuercherArrest {
                 .endEntity()
                 .addEntity( "contactInfo" )
                     .to( CONTACT_INFO_NAME )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .addProperty( "general.id", "Phone" )
                     .addProperty( "contact.phonenumber", "Phone" )
                     .addProperty( "contact.cellphone", "isMobile" )
@@ -136,7 +138,7 @@ public class ZuercherArrest {
 
                 .addAssociation( "arrestedin" )
                     .to( "PenZuercherArrests" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "incident" )
                     .addProperty( "ol.arrestdatetime" )
@@ -147,17 +149,17 @@ public class ZuercherArrest {
                 .endAssociation()
                 .addAssociation( "chargedwith" )
                     .to("PenZuercherchargedwith")
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "charge" )
-                .entityIdGenerator( row -> row.get( "SSN" ) + row.get( "Statute/Offense" ) )
+                .entityIdGenerator( row -> Optional.ofNullable( Parsers.getAsString( row.get( "SSN" ) ) ).orElse( "" ) + Optional.ofNullable( Parsers.getAsString( row.get( "Statute/Offense" ) ) ).orElse( "" ) )
                 .addProperty( "general.stringid" , "PartyID")
                     .addProperty( "event.ChargeLevel" )
                         .value( ZuercherArrest::chargeLevel ).ok()
                 .endAssociation()
                 .addAssociation( "appearsin" )
                     .to( "PenZuercherAppearsin" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "pretrialcase" )
                     .addProperty( "general.stringid" )
@@ -165,7 +167,7 @@ public class ZuercherArrest {
                 .endAssociation()
                 .addAssociation( "livesat" )
                     .to("PenZLivesAt")
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "address" )
                     .entityIdGenerator( row -> row.get( "PartyID" ) +  getFullAddressAsString( row ) )
@@ -174,7 +176,7 @@ public class ZuercherArrest {
                 .endAssociation()
                 .addAssociation( "hasContact" )
                     .to( CONTACT_INFO_GIVEN_NAME )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "contactInfo" )
                     .addProperty( "ol.id", "Phone" )
@@ -183,11 +185,11 @@ public class ZuercherArrest {
                 .done();
                 //@formatter:on
 
-        Shuttle shuttle = new Shuttle( environment, jwtToken );
-        Map<Flight, Stream<Map<String, String>>> flights = new HashMap<>( 1 );
-        flights.put( arrestsflight, payload.getPayload() );
+        MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "" );
+        Map<Flight, Payload> flights = new HashMap<>( 1 );
+        flights.put( arrestsflight, payload );
 
-        shuttle.launch( flights );
+        missionControl.prepare( flights, false, ImmutableSet.of() ).launch();
 
     }
 
@@ -337,11 +339,11 @@ public class ZuercherArrest {
         return getAddress( street, city, state, zipcode );
     }
 
-    public static String getFullAddressAsString( Map<String, String> row ) {
-        String street = row.get( "Address" );
-        String city = row.get( "City" );
-        String state = row.get( "State" );
-        String zipcode = row.get( "ZIP" );
+    public static String getFullAddressAsString( Map<String, Object> row ) {
+        String street = Optional.ofNullable( Parsers.getAsString( row.get( "Address" ) ) ).orElse( "" );
+        String city = Optional.ofNullable( Parsers.getAsString( row.get( "City" ) ) ).orElse( "" );
+        String state = Optional.ofNullable( Parsers.getAsString( row.get( "State" ) ) ).orElse( "" );
+        String zipcode = Optional.ofNullable( Parsers.getAsString( row.get( "ZIP" ) ) ).orElse( "" );
 
         return getAddress( street, city, state, zipcode );
     }

@@ -1,6 +1,8 @@
 package com.openlattice.integrations.pennington;
 
+import com.google.common.collect.ImmutableSet;
 import com.openlattice.client.RetrofitFactory;
+import com.openlattice.data.UpdateType;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Kim Engie &lt;kim@openlattice.com&gt;
@@ -62,8 +65,8 @@ public class MinPennHearings {
                 .createEntities()
                 .addEntity( JUDGE_ALIAS )
                     .to( JUDGE_ENTITY_SET )
-                    .useCurrentSync()
-                    .entityIdGenerator( row -> row.get("JudicialOfficer") )
+                    .updateType( UpdateType.Merge )
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get("JudicialOfficer") ) )
                     .addProperty( "nc.PersonGivenName" )
                         .value( row -> getFirstName (row.getAs( "JudicialOfficer" ))).ok()
                     .addProperty( "nc.PersonSurName" )
@@ -71,8 +74,8 @@ public class MinPennHearings {
                 .endEntity()
                 .addEntity( HEARING_ALIAS )
                     .to( HEARING_ENTITY_SET )
-                    .useCurrentSync()
-                    .entityIdGenerator( row -> row.get( "ID" ) )
+                    .updateType( UpdateType.Replace )
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get( "ID" ) ) )
                     .addProperty( "j.CaseNumberText", "ID" )
                     .addProperty( "justice.courtcasetype", "HearingType" )
                     .addProperty( "general.datetime" ).value( MinPennHearings::getDateTimeFromRow ).ok()
@@ -82,13 +85,13 @@ public class MinPennHearings {
                 .endEntity()
                 .addEntity( CASE_ALIAS )
                     .to( CASE_ENTITY_SET )
-                    .useCurrentSync()
-                    .entityIdGenerator( row -> row.get("DocketNumber" ) )
+                    .updateType( UpdateType.Merge )
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get("DocketNumber" ) ) )
                     .addProperty( "j.CaseNumberText", "DocketNumber" )
                 .endEntity()
                 .addEntity( PERSON_ALIAS )
                     .to( PEOPLE_ENTITY_SET )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Merge )
                     .addProperty( "nc.SubjectIdentification", "PartyID" )
                     .addProperty( "nc.PersonGivenName", "InmateFName" )
                     .addProperty( "nc.PersonSurName", "InmateLName" )
@@ -101,21 +104,21 @@ public class MinPennHearings {
                 .createAssociations()
 
                 .addAssociation( "overseescase" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .to( OVERSEES_ENTITY_SET )
                     .fromEntity( JUDGE_ALIAS )
                     .toEntity( CASE_ALIAS )
                     .addProperty( "date.completeddatetime" ).value( MinPennHearings::getDateTimeFromRow ).ok()
                 .endAssociation()
                 .addAssociation( "overseeshearing" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .to( OVERSEES_ENTITY_SET )
                     .fromEntity( JUDGE_ALIAS )
                     .toEntity( HEARING_ALIAS )
                     .addProperty( "date.completeddatetime" ).value( MinPennHearings::getDateTimeFromRow ).ok()
                 .endAssociation()
                 .addAssociation( "appearsin" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .to( APPEARS_IN_ENTITY_SET )
                     .fromEntity( HEARING_ALIAS )
                     .toEntity( CASE_ALIAS )
@@ -123,7 +126,7 @@ public class MinPennHearings {
                         .value( row -> Parsers.getAsString( row.getAs( "DocketNumber" ) ) + Parsers.getAsString( row.getAs( "ID" ) ) ).ok()
                 .endAssociation()
                 .addAssociation( "appearsInHearing" )
-                    .useCurrentSync()
+                    .updateType( UpdateType.Replace )
                     .to( APPEARS_IN_ENTITY_SET )
                     .fromEntity( PERSON_ALIAS )
                     .toEntity( HEARING_ALIAS )
@@ -133,11 +136,11 @@ public class MinPennHearings {
                 .endAssociations()
                 .done();
 
-        Shuttle shuttle = new Shuttle( environment, jwtToken );
+        MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "" );
         Map<Flight, Payload>  flights = new HashMap<>( 1 );
         flights.put( hearingsflight, payload );
 
-        shuttle.launchPayloadFlight( flights );
+        missionControl.prepare( flights, false, ImmutableSet.of() ).launch();
 
     }
 
