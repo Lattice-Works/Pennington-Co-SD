@@ -82,6 +82,7 @@ public class MinPennHearings {
                     .addProperty( "event.comments", "HearingComment" )
                     .addProperty( "ol.update", "UpdateType" )
                     .addProperty( "justice.courtroom", "Courtroom" )
+                    .addProperty( "ol.inactive" ).value( MinPennHearings::hearingIsCancelled ).ok()
                 .endEntity()
                 .addEntity( CASE_ALIAS )
                     .to( CASE_ENTITY_SET )
@@ -142,6 +143,11 @@ public class MinPennHearings {
 
         missionControl.prepare( flights, false, ImmutableSet.of() ).launch();
 
+    }
+
+    private static boolean hearingIsCancelled( Row row ) {
+        String updateType = Parsers.getAsString( row.getAs( "UpdateType" ) );
+        return StringUtils.isNotBlank( updateType ) && updateType.toLowerCase().trim().equals( "cancelled" );
     }
 
     private static Object getDateTimeFromRow( Row row ) {
