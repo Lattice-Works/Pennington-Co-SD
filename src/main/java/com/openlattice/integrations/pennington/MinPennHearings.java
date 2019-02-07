@@ -141,7 +141,7 @@ public class MinPennHearings {
         Map<Flight, Payload>  flights = new HashMap<>( 1 );
         flights.put( hearingsflight, payload );
 
-        missionControl.prepare( flights, false, ImmutableSet.of() ).launch();
+        missionControl.prepare( flights, false, ImmutableSet.of() ).launch( 10000 );
 
     }
 
