@@ -66,7 +66,7 @@ public class MinPennHearings {
                 .addEntity( JUDGE_ALIAS )
                     .to( JUDGE_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .entityIdGenerator( row -> Parsers.getAsString( row.get("JudicialOfficer") ) )
+                    .addProperty( "nc.SubjectIdentification", "JudgeID" )
                     .addProperty( "nc.PersonGivenName" )
                         .value( row -> getFirstName (row.getAs( "JudicialOfficer" ))).ok()
                     .addProperty( "nc.PersonSurName" )
