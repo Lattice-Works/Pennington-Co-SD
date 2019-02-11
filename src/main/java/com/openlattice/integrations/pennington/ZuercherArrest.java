@@ -127,8 +127,8 @@ public class ZuercherArrest {
                 .addEntity( "contactInfo" )
                     .to( CONTACT_INFO_NAME )
                     .updateType( UpdateType.Replace )
-                    .addProperty( "general.id", "Phone" )
-                    .addProperty( "contact.phonenumber", "Phone" )
+                    .addProperty( "general.id").value( ZuercherArrest::formatPhoneNumber ).ok()
+                    .addProperty( "contact.phonenumber" ).value( ZuercherArrest::formatPhoneNumber ).ok()
                     .addProperty( "contact.cellphone", "isMobile" )
                     .addProperty( "ol.preferred", "preferred" )
                 .endEntity()
@@ -179,7 +179,7 @@ public class ZuercherArrest {
                     .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "contactInfo" )
-                    .addProperty( "ol.id", "Phone" )
+                    .addProperty( "ol.id" ).value( ZuercherArrest::formatPhoneNumber ).ok()
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -191,6 +191,25 @@ public class ZuercherArrest {
 
         missionControl.prepare( flights, false, ImmutableSet.of() ).launch( 10000 );
 
+    }
+
+    public static String formatPhoneNumber( Row row ) {
+        String phoneNumber = Parsers.getAsString( row.getAs( "Phone" ) );
+        if ( StringUtils.isNotBlank( phoneNumber ) ) {
+            String numbersOnly = phoneNumber.replaceAll( "[^0-9]", "" );
+            if ( numbersOnly.length() == 10 ) {
+                return new StringBuilder( "(" )
+                        .append( numbersOnly, 0, 3 )
+                        .append( ") " )
+                        .append( numbersOnly, 3, 6 )
+                        .append( "-" )
+                        .append( numbersOnly, 6, 10 )
+                        .toString();
+            }
+
+        }
+
+        return null;
     }
 
     public static List<String> getAliases( Row row ) {
