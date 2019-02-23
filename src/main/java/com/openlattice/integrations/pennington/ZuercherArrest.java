@@ -1,5 +1,6 @@
 package com.openlattice.integrations.pennington;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.openlattice.client.RetrofitFactory;
@@ -27,6 +28,11 @@ import java.util.stream.Stream;
  * @author Kim Engie &lt;kim@openlattice.com&gt;
  */
 
+enum County {
+    pennington,
+    minnehaha
+}
+
 public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
@@ -35,6 +41,35 @@ public class ZuercherArrest {
             "MM/dd/YY" );
     private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
             "MM/dd/yy HH:mm" );
+
+    private static final Map<County, IntegrationConfiguration> CONFIGURATIONS = ImmutableMap.of(
+            County.pennington, new IntegrationConfiguration(
+                    "southdakotapeople",
+                    "PenZuercherIncident",
+                    "PenZuercherCharge",
+                    "PenZuercherPretrialCase",
+                    "PenZuercherAddress",
+                    "southdakotacontactinformation",
+                    "PenZuercherArrests",
+                    "PenZuercherchargedwith",
+                    "PenZuercherAppearsin",
+                    "PenZLivesAt",
+                    "southdakotacontactinfogiven"
+            ),
+            County.minnehaha, new IntegrationConfiguration(
+                    "southdakotapeople",
+                    "Minnehaha County, SD_app_incident",
+                    "Minnehaha County, SD_app_arrestcharges",
+                    "Minnehaha County, SD_app_arrestpretrialcases",
+                    "Minnehaha County, SD_app_address",
+                    "southdakotacontactinformation",
+                    "Minnehaha County, SD_app_arrestedin",
+                    "Minnehaha County, SD_app_arrestchargedwith",
+                    "Minnehaha County, SD_app_appearsinarrest",
+                    "Minnehaha County, SD_app_livesat_arrest",
+                    "southdakotacontactinfogiven"
+            )
+    );
 
     private static final String CONTACT_INFO_NAME       = "southdakotacontactinformation";
     private static final String CONTACT_INFO_GIVEN_NAME = "southdakotacontactinfogiven";
@@ -60,7 +95,7 @@ public class ZuercherArrest {
                 .createEntities()
 
                 .addEntity( "arrestee")
-                    .to( "southdakotapeople" )
+                    .to( config.getPeople() )
                     .updateType( UpdateType.Merge )
                     .addProperty( "nc.SSN", "SSN" )
                     .addProperty( "nc.SubjectIdentification", "PartyID" )
@@ -80,7 +115,7 @@ public class ZuercherArrest {
                         .value( row -> bdHelper.parseDate( row.getAs("DOB" ) ) ).ok()
                 .endEntity()
                 .addEntity( "incident" )
-                    .to( "PenZuercherIncident")
+                    .to( config.getIncident() )
                     .updateType( UpdateType.Replace )
                     .addProperty( "criminaljustice.incidentid", "Case Number" )
                     .addProperty( "ol.gangactivity", "Other Gang" )
@@ -94,7 +129,7 @@ public class ZuercherArrest {
                     .addProperty( "ol.computerincrime", "Offender(s) Used Computer Equipment" )
                 .endEntity()
                 .addEntity( "charge" )
-                    .to( "PenZuercherCharge" )
+                    .to( config.getCharge() )
                     .updateType( UpdateType.Replace )
                     .addProperty( "justice.ArrestTrackingNumber" ).value( ZuercherArrest::getChargeId ).ok()
                     .addProperty( "event.OffenseLocalCodeSection")
@@ -105,7 +140,7 @@ public class ZuercherArrest {
                     .addProperty( "event.comments", "Offense Details" )
                 .endEntity()
                 .addEntity( "pretrialcase" )
-                    .to( "PenZuercherPretrialCase" )
+                    .to( config.getPretrialCase() )
                     .updateType( UpdateType.Replace )
                     .entityIdGenerator( row -> Parsers.getAsString( row.get("Arrest Transaction number" ) ) )
                     .addProperty( "j.CaseNumberText").value( row -> Parsers.getAsString( row.getAs("Arrest Transaction number" ) ) ).ok()
@@ -116,7 +151,7 @@ public class ZuercherArrest {
                     .addProperty( "criminaljustice.arrestagency", "Abbreviation" )
                 .endEntity()
                 .addEntity( "address" )
-                    .to( "PenZuercherAddress")
+                    .to( config.getAddress() )
                     .updateType( UpdateType.Merge )
                     .addProperty( "location.Address")
                         .value( ZuercherArrest::getFulladdress ).ok()
@@ -125,7 +160,7 @@ public class ZuercherArrest {
                     .addProperty( "location.zip", "ZIP")
                 .endEntity()
                 .addEntity( "contactInfo" )
-                    .to( CONTACT_INFO_NAME )
+                    .to( config.getContactInformation() )
                     .updateType( UpdateType.Replace )
                     .addProperty( "general.id").value( ZuercherArrest::formatPhoneNumber ).ok()
                     .addProperty( "contact.phonenumber" ).value( ZuercherArrest::formatPhoneNumber ).ok()
@@ -137,7 +172,7 @@ public class ZuercherArrest {
                 .createAssociations()
 
                 .addAssociation( "arrestedin" )
-                    .to( "PenZuercherArrests" )
+                    .to( config.getArrests() )
                     .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "incident" )
@@ -148,7 +183,7 @@ public class ZuercherArrest {
                     .addProperty( "criminaljustice.arrestagency", "Abbreviation" )
                 .endAssociation()
                 .addAssociation( "chargedwith" )
-                    .to("PenZuercherchargedwith")
+                    .to( config.getChargedWith() )
                     .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "charge" )
@@ -158,7 +193,7 @@ public class ZuercherArrest {
                         .value( ZuercherArrest::chargeLevel ).ok()
                 .endAssociation()
                 .addAssociation( "appearsin" )
-                    .to( "PenZuercherAppearsin" )
+                    .to( config.getAppearsIn() )
                     .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "pretrialcase" )
@@ -166,7 +201,7 @@ public class ZuercherArrest {
                         .value( row -> Parsers.getAsString( row.getAs( "Arrest Transaction number" )) + Parsers.getAsString( row.getAs( "PartyID" )) ).ok()
                 .endAssociation()
                 .addAssociation( "livesat" )
-                    .to("PenZLivesAt")
+                    .to( config.getLivesAt() )
                     .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "address" )
@@ -175,7 +210,7 @@ public class ZuercherArrest {
                         .value( ZuercherArrest::getFulladdress ).ok()
                 .endAssociation()
                 .addAssociation( "hasContact" )
-                    .to( CONTACT_INFO_GIVEN_NAME )
+                    .to( config.getContactInformationGiven() )
                     .updateType( UpdateType.Replace )
                     .fromEntity( "arrestee" )
                     .toEntity( "contactInfo" )
@@ -185,7 +220,9 @@ public class ZuercherArrest {
                 .done();
                 //@formatter:on
 
-        MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
+        MissionControl missionControl = new MissionControl( environment,
+                () -> jwtToken,
+                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
         Map<Flight, Payload> flights = new HashMap<>( 1 );
         flights.put( arrestsflight, payload );
 
