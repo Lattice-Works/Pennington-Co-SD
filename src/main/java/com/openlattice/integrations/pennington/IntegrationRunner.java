@@ -5,10 +5,10 @@ import java.io.IOException;
 public class IntegrationRunner {
 
     public static void main( String[] args ) throws InterruptedException, IOException {
-        if ( args.length > 3 ) {
-            MinPennHearings.integrate( args );
-        } else {
+        if ( args.length > 4 ) {
             ZuercherArrest.integrate( args );
+        } else {
+            MinPennHearings.integrate( args );
         }
     }
 }
