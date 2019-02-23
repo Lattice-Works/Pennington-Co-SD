@@ -87,6 +87,7 @@ public class ZuercherArrest {
         Payload payload = new SimplePayload( arrestsPath );
 
         //        SimplePayload payload = new SimplePayload( arrestsPath );
+        final IntegrationConfiguration config = CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
