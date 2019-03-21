@@ -35,7 +35,7 @@ enum County {
 
 public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
-    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
+    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     private static final DateTimeHelper     bdHelper = new DateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY" );

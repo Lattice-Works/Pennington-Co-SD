@@ -28,7 +28,7 @@ import java.util.Optional;
 
 public class MinPennHearings {
     private static final Logger                      logger      = LoggerFactory.getLogger( MinPennHearings.class );
-    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
+    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     private static final String             dateTimePattern = "MM/dd/yyyy hh:mma";
     private static final JavaDateTimeHelper pennDTHelper    = new JavaDateTimeHelper( TimeZones.America_Denver,
