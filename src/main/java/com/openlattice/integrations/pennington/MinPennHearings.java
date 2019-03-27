@@ -142,6 +142,7 @@ public class MinPennHearings {
         flights.put( hearingsflight, payload );
 
         missionControl.prepare( flights, false, ImmutableSet.of() ).launch( 10000 );
+        MissionControl.succeed();
 
     }
 
