@@ -228,7 +228,7 @@ public class ZuercherArrest {
         flights.put( arrestsflight, payload );
 
         missionControl.prepare( flights, false, ImmutableSet.of() ).launch( 10000 );
-
+        MissionControl.succeed();
     }
 
     public static String formatPhoneNumber( Row row ) {
