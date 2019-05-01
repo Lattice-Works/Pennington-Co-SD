@@ -41,11 +41,13 @@ public class MinPennHearings {
     private static final String CASE_ALIAS       = "case";
     private static final String COURTHOUSE_ALIAS = "courthouse";
     private static final String COURTROOM_ALIAS  = "courtroom";
+    private static final String COUNTY_ALIAS  = "county";
     private static final String HEARING_ALIAS    = "hearing";
     private static final String JUDGE_ALIAS      = "judge";
     private static final String PERSON_ALIAS     = "person";
 
     private static final String CASE_ENTITY_SET        = "southdakotapretrialcaseprocessings";
+    private static final String COUNTIES_ENTITY_SET    = "southdakotacounties";
     private static final String COURTHOUSES_ENTITY_SET = "southdakotacourthouses";
     private static final String COURTROOMS_ENTITY_SET  = "southdakotacourtrooms";
     private static final String HEARING_ENTITY_SET     = "southdakotahearings";
@@ -99,6 +101,11 @@ public class MinPennHearings {
                     .updateType( UpdateType.Merge )
                     .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
                 .endEntity()
+                .addEntity( COUNTY_ALIAS )
+                    .to( COUNTIES_ENTITY_SET )
+                    .updateType( UpdateType.Merge )
+                    .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
+                .endEntity()
                 .addEntity( COURTROOM_ALIAS )
                     .to( COURTROOMS_ENTITY_SET )
                     .updateType( UpdateType.Merge )
@@ -147,6 +154,13 @@ public class MinPennHearings {
                     .fromEntity( PERSON_ALIAS )
                     .toEntity( HEARING_ALIAS )
                     .addProperty( "general.stringid" ).value( row -> Parsers.getAsString( row.getAs( "ID" ) ) + "|" + Parsers.getAsString( row.getAs( "PartyID" ) ) ).ok()
+                .endAssociation()
+                .addAssociation( "hearingAppearsInCounty" )
+                    .updateType( UpdateType.Replace )
+                    .to( APPEARS_IN_ENTITY_SET )
+                    .fromEntity( HEARING_ALIAS )
+                    .toEntity( COUNTY_ALIAS )
+                    .addProperty( "general.stringid" ).value( row -> getCountyPrefix( row ) + "|" + row.getAs( "ID" ) ).ok()
                 .endAssociation()
                 .addAssociation( "hearingAppearsInCourtroom" )
                     .updateType( UpdateType.Replace )
