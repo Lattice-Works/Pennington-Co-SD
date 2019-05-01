@@ -38,17 +38,21 @@ public class MinPennHearings {
 
     private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver, "MM/dd/yyyy" );
 
-    private static final String CASE_ALIAS    = "case";
-    private static final String HEARING_ALIAS = "hearing";
-    private static final String JUDGE_ALIAS   = "judge";
-    private static final String PERSON_ALIAS  = "person";
+    private static final String CASE_ALIAS       = "case";
+    private static final String COURTHOUSE_ALIAS = "courthouse";
+    private static final String COURTROOM_ALIAS  = "courtroom";
+    private static final String HEARING_ALIAS    = "hearing";
+    private static final String JUDGE_ALIAS      = "judge";
+    private static final String PERSON_ALIAS     = "person";
 
-    private static final String CASE_ENTITY_SET       = "southdakotapretrialcaseprocessings";
-    private static final String HEARING_ENTITY_SET    = "southdakotahearings";
-    private static final String JUDGE_ENTITY_SET      = "southdakotajudges";
-    private static final String APPEARS_IN_ENTITY_SET = "southdakotaappearsin";
-    private static final String OVERSEES_ENTITY_SET   = "southdakotaoversees";
-    private static final String PEOPLE_ENTITY_SET     = "southdakotapeople";
+    private static final String CASE_ENTITY_SET        = "southdakotapretrialcaseprocessings";
+    private static final String COURTHOUSES_ENTITY_SET = "southdakotacourthouses";
+    private static final String COURTROOMS_ENTITY_SET  = "southdakotacourtrooms";
+    private static final String HEARING_ENTITY_SET     = "southdakotahearings";
+    private static final String JUDGE_ENTITY_SET       = "southdakotajudges";
+    private static final String APPEARS_IN_ENTITY_SET  = "southdakotaappearsin";
+    private static final String OVERSEES_ENTITY_SET    = "southdakotaoversees";
+    private static final String PEOPLE_ENTITY_SET      = "southdakotapeople";
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
 
@@ -89,6 +93,17 @@ public class MinPennHearings {
                     .updateType( UpdateType.Merge )
                     .entityIdGenerator( row -> Parsers.getAsString( row.get("DocketNumber" ) ) )
                     .addProperty( "j.CaseNumberText", "DocketNumber" )
+                .endEntity()
+                .addEntity( COURTHOUSE_ALIAS )
+                    .to( COURTHOUSES_ENTITY_SET )
+                    .updateType( UpdateType.Merge )
+                    .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
+                .endEntity()
+                .addEntity( COURTROOM_ALIAS )
+                    .to( COURTROOMS_ENTITY_SET )
+                    .updateType( UpdateType.Merge )
+                    .addProperty( "ol.id" ).value( MinPennHearings::getCourtroomId ).ok()
+                    .addProperty( "ol.roomnumber", "Courtroom" )
                 .endEntity()
                 .addEntity( PERSON_ALIAS )
                     .to( PEOPLE_ENTITY_SET )
@@ -133,6 +148,20 @@ public class MinPennHearings {
                     .toEntity( HEARING_ALIAS )
                     .addProperty( "general.stringid" ).value( row -> Parsers.getAsString( row.getAs( "ID" ) ) + "|" + Parsers.getAsString( row.getAs( "PartyID" ) ) ).ok()
                 .endAssociation()
+                .addAssociation( "hearingAppearsInCourtroom" )
+                    .updateType( UpdateType.Replace )
+                    .to( APPEARS_IN_ENTITY_SET )
+                    .fromEntity( HEARING_ALIAS )
+                    .toEntity( COURTROOM_ALIAS )
+                    .addProperty( "general.stringid" ).value( row -> row.getAs( "ID" ) + "|" + getCourtroomId( row ) ).ok()
+                .endAssociation()
+                .addAssociation( "hearingAppearsInCourthouse" )
+                    .updateType( UpdateType.Replace )
+                    .to( APPEARS_IN_ENTITY_SET )
+                    .fromEntity( HEARING_ALIAS )
+                    .toEntity( COURTHOUSE_ALIAS )
+                    .addProperty( "general.stringid" ).value( row -> row.getAs( "ID" ) + "|" + getCountyPrefix( row ) ).ok()
+                .endAssociation()
 
                 .endAssociations()
                 .done();
@@ -151,18 +180,33 @@ public class MinPennHearings {
         return StringUtils.isNotBlank( updateType ) && updateType.toLowerCase().trim().equals( "cancelled" );
     }
 
-    private static Object getDateTimeFromRow( Row row ) {
+    private static String getCountyPrefix( Row row ) {
         String caseNum = Parsers.getAsString( row.getAs( "DocketNumber" ) );
+        if (StringUtils.isNoneBlank( caseNum )) {
+            return caseNum.trim().substring( 0, 2 );
+        }
+
+        return null;
+    }
+
+    private static String getCourtroomId( Row row ) {
+        String countyPrefix = getCountyPrefix( row );
+        String courtroom = row.getAs( "Courtroom" );
+        return countyPrefix + "|" + courtroom;
+    }
+
+    private static Object getDateTimeFromRow( Row row ) {
+        String countyPrefix = getCountyPrefix( row );
 
         String dateStr = Parsers.getAsString( row.getAs( "HearingDate" ) );
         String timeStr = Parsers.getAsString( row.getAs( "HearingTime" ) );
-        if ( caseNum == null || dateStr == null || timeStr == null ) {
+        if ( countyPrefix == null || dateStr == null || timeStr == null ) {
             logger.debug( "Unable to get datetime." );
             return null;
         }
 
         String dateTimeStr = dateStr.trim() + " " + timeStr.trim();
-        return (caseNum.trim().startsWith( "49" ) ? minnDTHelper : pennDTHelper).parseDateTime( dateTimeStr );
+        return (countyPrefix.equals( "49" ) ? minnDTHelper : pennDTHelper).parseDateTime( dateTimeStr );
     }
 
     public static String getLastName (Object obj){
