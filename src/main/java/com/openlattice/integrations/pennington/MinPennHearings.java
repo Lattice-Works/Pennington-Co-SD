@@ -101,7 +101,7 @@ public class MinPennHearings {
                     .updateType( UpdateType.Merge )
                     .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
                 .endEntity()
-                    .addEntity( COUNTY_ALIAS )
+                .addEntity( COUNTY_ALIAS )
                     .to( COUNTIES_ENTITY_SET )
                     .updateType( UpdateType.Merge )
                     .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
