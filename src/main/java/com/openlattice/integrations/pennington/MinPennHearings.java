@@ -3,11 +3,11 @@ package com.openlattice.integrations.pennington;
 import com.google.common.collect.ImmutableSet;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.data.UpdateType;
+import com.openlattice.integrations.pennington.utils.EdmConstants;
+import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
-import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
-import com.openlattice.shuttle.dates.DateTimeHelper;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.Payload;
@@ -38,24 +38,6 @@ public class MinPennHearings {
 
     private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver, "MM/dd/yyyy" );
 
-    private static final String CASE_ALIAS       = "case";
-    private static final String COURTHOUSE_ALIAS = "courthouse";
-    private static final String COURTROOM_ALIAS  = "courtroom";
-    private static final String COUNTY_ALIAS  = "county";
-    private static final String HEARING_ALIAS    = "hearing";
-    private static final String JUDGE_ALIAS      = "judge";
-    private static final String PERSON_ALIAS     = "person";
-
-    private static final String CASE_ENTITY_SET        = "southdakotapretrialcaseprocessings";
-    private static final String COUNTIES_ENTITY_SET    = "southdakotacounties";
-    private static final String COURTHOUSES_ENTITY_SET = "southdakotacourthouses";
-    private static final String COURTROOMS_ENTITY_SET  = "southdakotacourtrooms";
-    private static final String HEARING_ENTITY_SET     = "southdakotahearings";
-    private static final String JUDGE_ENTITY_SET       = "southdakotajudges";
-    private static final String APPEARS_IN_ENTITY_SET  = "southdakotaappearsin";
-    private static final String OVERSEES_ENTITY_SET    = "southdakotaoversees";
-    private static final String PEOPLE_ENTITY_SET      = "southdakotapeople";
-
     public static void integrate( String[] args ) throws InterruptedException, IOException {
 
         final String username = args[ 0 ];
@@ -69,112 +51,112 @@ public class MinPennHearings {
         //@formatter:off
         Flight hearingsflight = Flight.newFlight()
                 .createEntities()
-                .addEntity( JUDGE_ALIAS )
-                    .to( JUDGE_ENTITY_SET )
+                .addEntity( IntegrationAliases.JUDGE_ALIAS )
+                    .to( EdmConstants.JUDGE_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .addProperty( "nc.SubjectIdentification", "JudgeID" )
-                    .addProperty( "nc.PersonGivenName" )
-                        .value( row -> getFirstName (row.getAs( "JudicialOfficer" ))).ok()
-                    .addProperty( "nc.PersonSurName" )
-                        .value( row -> getLastName( row.getAs( "JudicialOfficer" ) ) ).ok()
+                    .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.JUDGE_ID_COL )
+                    .addProperty( EdmConstants.FIRST_NAME_FQN )
+                        .value( row -> getFirstName (row.getAs( IntegrationAliases.JUDICIAL_OFFICER_COL ))).ok()
+                    .addProperty( EdmConstants.LAST_NAME_FQN )
+                        .value( row -> getLastName( row.getAs( IntegrationAliases.JUDICIAL_OFFICER_COL ) ) ).ok()
                 .endEntity()
-                .addEntity( HEARING_ALIAS )
-                    .to( HEARING_ENTITY_SET )
+                .addEntity( IntegrationAliases.HEARING_ALIAS )
+                    .to( EdmConstants.HEARING_ENTITY_SET )
                     .updateType( UpdateType.Replace )
-                    .entityIdGenerator( row -> Parsers.getAsString( row.get( "ID" ) ) )
-                    .addProperty( "j.CaseNumberText", "ID" )
-                    .addProperty( "justice.courtcasetype", "HearingType" )
-                    .addProperty( "general.datetime" ).value( MinPennHearings::getDateTimeFromRow ).ok()
-                    .addProperty( "event.comments", "HearingComment" )
-                    .addProperty( "ol.update", "UpdateType" )
-                    .addProperty( "justice.courtroom", "Courtroom" )
-                    .addProperty( "ol.inactive" ).value( MinPennHearings::hearingIsCancelled ).ok()
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get( IntegrationAliases.GENERAL_ID_COL ) ) )
+                    .addProperty( EdmConstants.CASE_NO_FQN, IntegrationAliases.GENERAL_ID_COL )
+                    .addProperty( EdmConstants.CASE_TYPE_FQN, IntegrationAliases.HEARING_TYPE_COL )
+                    .addProperty( EdmConstants.DATETIME_FQN ).value( MinPennHearings::getDateTimeFromRow ).ok()
+                    .addProperty( EdmConstants.COMMENTS_FQN, IntegrationAliases.HEARING_COMMENT_COL )
+                    .addProperty( EdmConstants.UPDATE_FQN, IntegrationAliases.UPDATE_TYPE_COL )
+                    .addProperty( EdmConstants.COURTROOM_FQN, IntegrationAliases.COURTROOM_COL )
+                    .addProperty( EdmConstants.INACTIVE_FQN ).value( MinPennHearings::hearingIsCancelled ).ok()
                 .endEntity()
-                .addEntity( CASE_ALIAS )
-                    .to( CASE_ENTITY_SET )
+                .addEntity( IntegrationAliases.CASE_ALIAS )
+                    .to( EdmConstants.CASES_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .entityIdGenerator( row -> Parsers.getAsString( row.get("DocketNumber" ) ) )
-                    .addProperty( "j.CaseNumberText", "DocketNumber" )
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get( IntegrationAliases.DOCKET_NO_COL ) ) )
+                    .addProperty( EdmConstants.CASE_NO_FQN, IntegrationAliases.DOCKET_NO_COL )
                 .endEntity()
-                .addEntity( COURTHOUSE_ALIAS )
-                    .to( COURTHOUSES_ENTITY_SET )
+                .addEntity( IntegrationAliases.COURTHOUSE_ALIAS )
+                    .to( EdmConstants.COURTHOUSES_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
+                    .addProperty( EdmConstants.GENERAL_ID_FQN ).value( MinPennHearings::getCountyPrefix ).ok()
                 .endEntity()
-                .addEntity( COUNTY_ALIAS )
-                    .to( COUNTIES_ENTITY_SET )
+                .addEntity( IntegrationAliases.COUNTY_ALIAS )
+                    .to( EdmConstants.COUNTIES_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .addProperty( "general.id" ).value( MinPennHearings::getCountyPrefix ).ok()
+                    .addProperty( EdmConstants.GENERAL_ID_FQN ).value( MinPennHearings::getCountyPrefix ).ok()
                 .endEntity()
-                .addEntity( COURTROOM_ALIAS )
-                    .to( COURTROOMS_ENTITY_SET )
+                .addEntity( IntegrationAliases.COURTROOM_ALIAS )
+                    .to( EdmConstants.COURTROOMS_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .addProperty( "ol.id" ).value( MinPennHearings::getCourtroomId ).ok()
-                    .addProperty( "ol.roomnumber", "Courtroom" )
+                    .addProperty( EdmConstants.OL_ID_FQN ).value( MinPennHearings::getCourtroomId ).ok()
+                    .addProperty( EdmConstants.ROOM_NO_FQN, IntegrationAliases.COURTROOM_ALIAS )
                 .endEntity()
-                .addEntity( PERSON_ALIAS )
-                    .to( PEOPLE_ENTITY_SET )
+                .addEntity( IntegrationAliases.PERSON_ALIAS )
+                    .to( EdmConstants.PEOPLE_ENTITY_SET )
                     .updateType( UpdateType.Merge )
-                    .addProperty( "nc.SubjectIdentification", "PartyID" )
-                    .addProperty( "nc.PersonGivenName", "InmateFName" )
-                    .addProperty( "nc.PersonSurName", "InmateLName" )
-                    .addProperty( "nc.PersonMiddleName", "InmateMidName" )
-                    .addProperty( "nc.PersonSuffix", "InmateSfxName" )
-                    .addProperty( "nc.PersonBirthDate" ).value( row -> bdHelper.parseDate( row.getAs( "InmateDOB" ) ) ).ok()
+                    .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.PERSON_ID_COL )
+                    .addProperty( EdmConstants.FIRST_NAME_FQN, IntegrationAliases.INMATE_FIRST_NAME_COL )
+                    .addProperty( EdmConstants.LAST_NAME_FQN, IntegrationAliases.INMATE_LAST_NAME_COL )
+                    .addProperty( EdmConstants.MIDDLE_NAME_FQN, IntegrationAliases.INMATE_MIDDLE_NAME_COL )
+                    .addProperty( EdmConstants.SUFFIX_FQN, IntegrationAliases.INMATE_SUFFIX_NAME_COL )
+                    .addProperty( EdmConstants.DOB_FQN ).value( row -> bdHelper.parseDate( row.getAs( IntegrationAliases.INMATE_DOB_COL ) ) ).ok()
                 .endEntity()
 
                 .endEntities()
                 .createAssociations()
 
-                .addAssociation( "overseescase" )
+                .addAssociation( IntegrationAliases.OVERSEES_CASE_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( OVERSEES_ENTITY_SET )
-                    .fromEntity( JUDGE_ALIAS )
-                    .toEntity( CASE_ALIAS )
-                    .addProperty( "date.completeddatetime" ).value( MinPennHearings::getDateTimeFromRow ).ok()
+                    .to( EdmConstants.OVERSEES_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.JUDGE_ALIAS )
+                    .toEntity( IntegrationAliases.CASE_ALIAS )
+                    .addProperty( EdmConstants.COMPLETED_DATETIME_FQN ).value( MinPennHearings::getDateTimeFromRow ).ok()
                 .endAssociation()
-                .addAssociation( "overseeshearing" )
+                .addAssociation( IntegrationAliases.OVERSEES_HEARING_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( OVERSEES_ENTITY_SET )
-                    .fromEntity( JUDGE_ALIAS )
-                    .toEntity( HEARING_ALIAS )
-                    .addProperty( "date.completeddatetime" ).value( MinPennHearings::getDateTimeFromRow ).ok()
+                    .to( EdmConstants.OVERSEES_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.JUDGE_ALIAS )
+                    .toEntity( IntegrationAliases.HEARING_ALIAS )
+                    .addProperty( EdmConstants.COMPLETED_DATETIME_FQN ).value( MinPennHearings::getDateTimeFromRow ).ok()
                 .endAssociation()
-                .addAssociation( "appearsin" )
+                .addAssociation( IntegrationAliases.APPEARS_IN_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( APPEARS_IN_ENTITY_SET )
-                    .fromEntity( HEARING_ALIAS )
-                    .toEntity( CASE_ALIAS )
-                    .addProperty( "general.stringid" )
-                        .value( row -> Parsers.getAsString( row.getAs( "DocketNumber" ) ) + Parsers.getAsString( row.getAs( "ID" ) ) ).ok()
+                    .to( EdmConstants.APPEARS_IN_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.HEARING_ALIAS )
+                    .toEntity( IntegrationAliases.CASE_ALIAS )
+                    .addProperty( EdmConstants.STRING_ID_FQN )
+                        .value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.DOCKET_NO_COL ) ) + Parsers.getAsString( row.getAs( IntegrationAliases.GENERAL_ID_COL ) ) ).ok()
                 .endAssociation()
-                .addAssociation( "appearsInHearing" )
+                .addAssociation( IntegrationAliases.APPEARS_IN_HEARING_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( APPEARS_IN_ENTITY_SET )
-                    .fromEntity( PERSON_ALIAS )
-                    .toEntity( HEARING_ALIAS )
-                    .addProperty( "general.stringid" ).value( row -> Parsers.getAsString( row.getAs( "ID" ) ) + "|" + Parsers.getAsString( row.getAs( "PartyID" ) ) ).ok()
+                    .to( EdmConstants.APPEARS_IN_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.PERSON_ALIAS )
+                    .toEntity( IntegrationAliases.HEARING_ALIAS )
+                    .addProperty( EdmConstants.STRING_ID_FQN ).value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.GENERAL_ID_COL ) ) + "|" + Parsers.getAsString( row.getAs( IntegrationAliases.PERSON_ID_COL ) ) ).ok()
                 .endAssociation()
-                .addAssociation( "hearingAppearsInCounty" )
+                .addAssociation( IntegrationAliases.HEARING_APPEARS_IN_COUNTY_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( APPEARS_IN_ENTITY_SET )
-                    .fromEntity( HEARING_ALIAS )
-                    .toEntity( COUNTY_ALIAS )
-                    .addProperty( "general.stringid" ).value( row -> getCountyPrefix( row ) + "|" + row.getAs( "ID" ) ).ok()
+                    .to( EdmConstants.APPEARS_IN_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.HEARING_ALIAS )
+                    .toEntity( IntegrationAliases.COUNTY_ALIAS )
+                    .addProperty( EdmConstants.STRING_ID_FQN ).value( row -> getCountyPrefix( row ) + "|" + row.getAs( IntegrationAliases.GENERAL_ID_COL ) ).ok()
                 .endAssociation()
-                .addAssociation( "hearingAppearsInCourtroom" )
+                .addAssociation( IntegrationAliases.HEARING_APPEARS_IN_COURTROOM_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( APPEARS_IN_ENTITY_SET )
-                    .fromEntity( HEARING_ALIAS )
-                    .toEntity( COURTROOM_ALIAS )
-                    .addProperty( "general.stringid" ).value( row -> row.getAs( "ID" ) + "|" + getCourtroomId( row ) ).ok()
+                    .to( EdmConstants.APPEARS_IN_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.HEARING_ALIAS )
+                    .toEntity( IntegrationAliases.COURTROOM_ALIAS )
+                    .addProperty( EdmConstants.STRING_ID_FQN ).value( row -> row.getAs( IntegrationAliases.GENERAL_ID_COL ) + "|" + getCourtroomId( row ) ).ok()
                 .endAssociation()
-                .addAssociation( "hearingAppearsInCourthouse" )
+                .addAssociation( IntegrationAliases.HEARING_APPEARS_IN_COURTHOUSE_ALIAS )
                     .updateType( UpdateType.Replace )
-                    .to( APPEARS_IN_ENTITY_SET )
-                    .fromEntity( HEARING_ALIAS )
-                    .toEntity( COURTHOUSE_ALIAS )
-                    .addProperty( "general.stringid" ).value( row -> row.getAs( "ID" ) + "|" + getCountyPrefix( row ) ).ok()
+                    .to( EdmConstants.APPEARS_IN_ENTITY_SET )
+                    .fromEntity( IntegrationAliases.HEARING_ALIAS )
+                    .toEntity( IntegrationAliases.COURTROOM_ALIAS )
+                    .addProperty( EdmConstants.STRING_ID_FQN ).value( row -> row.getAs( IntegrationAliases.GENERAL_ID_COL ) + "|" + getCountyPrefix( row ) ).ok()
                 .endAssociation()
 
                 .endAssociations()
@@ -190,12 +172,12 @@ public class MinPennHearings {
     }
 
     private static boolean hearingIsCancelled( Row row ) {
-        String updateType = Parsers.getAsString( row.getAs( "UpdateType" ) );
+        String updateType = Parsers.getAsString( row.getAs( IntegrationAliases.UPDATE_TYPE_COL ) );
         return StringUtils.isNotBlank( updateType ) && updateType.toLowerCase().trim().equals( "cancelled" );
     }
 
     private static String getCountyPrefix( Row row ) {
-        String caseNum = Parsers.getAsString( row.getAs( "DocketNumber" ) );
+        String caseNum = Parsers.getAsString( row.getAs( IntegrationAliases.DOCKET_NO_COL ) );
         if (StringUtils.isNoneBlank( caseNum )) {
             return caseNum.trim().substring( 0, 2 );
         }
@@ -205,15 +187,15 @@ public class MinPennHearings {
 
     private static String getCourtroomId( Row row ) {
         String countyPrefix = getCountyPrefix( row );
-        String courtroom = row.getAs( "Courtroom" );
+        String courtroom = row.getAs( IntegrationAliases.COURTROOM_ALIAS );
         return countyPrefix + "|" + courtroom;
     }
 
     private static Object getDateTimeFromRow( Row row ) {
         String countyPrefix = getCountyPrefix( row );
 
-        String dateStr = Parsers.getAsString( row.getAs( "HearingDate" ) );
-        String timeStr = Parsers.getAsString( row.getAs( "HearingTime" ) );
+        String dateStr = Parsers.getAsString( row.getAs( IntegrationAliases.HEARING_DATE_COL ) );
+        String timeStr = Parsers.getAsString( row.getAs( IntegrationAliases.HEARING_TIME_COL ) );
         if ( countyPrefix == null || dateStr == null || timeStr == null ) {
             logger.debug( "Unable to get datetime." );
             return null;
