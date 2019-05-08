@@ -65,8 +65,8 @@ public class IntegrationAliases {
     public static final String HEARING_TYPE_COL             = "HearingType";
 
     public static final String INCIDENT_START_DATETIME_COL  = "Incident Start Date/Time";
-    public static final String INMATE_FIRST_NAME_COL        = "InmateDOB";
-    public static final String INMATE_DOB_COL               = "InmateFName";
+    public static final String INMATE_FIRST_NAME_COL        = "InmateFName";
+    public static final String INMATE_DOB_COL               = "InmateDOB";
     public static final String INMATE_LAST_NAME_COL         = "InmateLName";
     public static final String INMATE_MIDDLE_NAME_COL       = "InmateMidName";
     public static final String INMATE_SUFFIX_NAME_COL       = "InmateSfxName";
