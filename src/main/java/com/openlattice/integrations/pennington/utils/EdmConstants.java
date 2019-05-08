@@ -2,19 +2,19 @@ package com.openlattice.integrations.pennington.utils;
 
 public class EdmConstants {
 
-    public static final String ADDRESSES_ENTITY_SET  = "southdakotaaddresses";
-    public static final String APPEARS_IN_ENTITY_SET  = "southdakotaappearsin";
-    public static final String CASES_ENTITY_SET      = "southdakotapretrialcaseprocessings";
-    public static final String COUNTIES_ENTITY_SET    = "southdakotacounties";
-    public static final String COURTHOUSES_ENTITY_SET = "southdakotacourthouses";
-    public static final String COURTROOMS_ENTITY_SET  = "southdakotacourtrooms";
-    public static final String HEARING_ENTITY_SET     = "southdakotahearings";
-    public static final String JUDGE_ENTITY_SET       = "southdakotajudges";
-    public static final String LIVES_AT_ENTITY_SET   = "southdakotalivesat";
-    public static final String OVERSEES_ENTITY_SET    = "southdakotaoversees";
-    public static final String PEOPLE_ENTITY_SET      = "southdakotapeople";
-    public static final String CONTACT_INFO_ENTITY_SET  = "southdakotacontactinformation";
-    public static final String CONTACT_INFO_GIVEN_ENTITY_SET = "southdakotacontactinfogiven";
+    public static final String ADDRESSES_ENTITY_SET             = "southdakotaaddresses";
+    public static final String APPEARS_IN_ENTITY_SET            = "southdakotaappearsin";
+    public static final String CONTACT_INFO_ENTITY_SET          = "southdakotacontactinformation";
+    public static final String CONTACT_INFO_GIVEN_ENTITY_SET    = "southdakotacontactinfogiven";
+    public static final String CASES_ENTITY_SET                 = "southdakotapretrialcaseprocessings";
+    public static final String COUNTIES_ENTITY_SET              = "southdakotacounties";
+    public static final String COURTHOUSES_ENTITY_SET           = "southdakotacourthouses";
+    public static final String COURTROOMS_ENTITY_SET            = "southdakotacourtrooms";
+    public static final String HEARING_ENTITY_SET               = "southdakotahearings";
+    public static final String JUDGE_ENTITY_SET                 = "southdakotajudges";
+    public static final String LIVES_AT_ENTITY_SET              = "southdakotalivesat";
+    public static final String OVERSEES_ENTITY_SET              = "southdakotaoversees";
+    public static final String PEOPLE_ENTITY_SET                = "southdakotapeople";
 
     public static final String ADDRESS_FQN              = "location.Address";
     public static final String AGE_AT_EVENT_FQN         = "person.ageatevent";
