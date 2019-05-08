@@ -151,15 +151,6 @@ public class ZuercherArrest {
                     .addProperty( EdmConstants.NUM_OF_CHARGES_FQN ).value( row -> Parsers.parseInt( row.getAs( IntegrationAliases.CHARGE_COUNT_COL ) ) ).ok()
                     .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, IntegrationAliases.ABBREVIATION_COL )
                 .endEntity()
-                .addEntity( IntegrationAliases.ADDRESS_ALIAS )
-                    .to( config.getAddress() )
-                    .updateType( UpdateType.Merge )
-                    .addProperty( EdmConstants.ADDRESS_FQN)
-                        .value( ZuercherArrest::getFulladdress ).ok()
-                    .addProperty( EdmConstants.CITY_FQN, IntegrationAliases.CITY_COL )
-                    .addProperty( EdmConstants.STATE_FQN, IntegrationAliases.STATE_COL )
-                    .addProperty( EdmConstants.ZIP_CODE_FQN, IntegrationAliases.ZIP_COL)
-                .endEntity()
                 .addEntity( IntegrationAliases.CONTACT_INFO_ALIAS )
                     .to( config.getContactInformation() )
                     .updateType( UpdateType.Replace )
@@ -200,15 +191,6 @@ public class ZuercherArrest {
                     .toEntity( IntegrationAliases.PRETRIAL_CASE_ALIAS )
                     .addProperty( EdmConstants.STRING_ID_FQN )
                         .value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.ARREST_TRANSACTION_NO_COL )) + Parsers.getAsString( row.getAs( IntegrationAliases.PERSON_ID_COL )) ).ok()
-                .endAssociation()
-                .addAssociation( IntegrationAliases.LIVES_AT_ALIAS )
-                    .to( config.getLivesAt() )
-                    .updateType( UpdateType.Replace )
-                    .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
-                    .toEntity( IntegrationAliases.ADDRESS_ALIAS )
-                    .entityIdGenerator( row -> row.get( IntegrationAliases.PERSON_ID_COL ) +  getFullAddressAsString( row ) )
-                    .addProperty( EdmConstants.STRING_ID_FQN)
-                        .value( ZuercherArrest::getFulladdress ).ok()
                 .endAssociation()
                 .addAssociation( IntegrationAliases.HAS_CONTACT_ALIAS )
                     .to( config.getContactInformationGiven() )
@@ -383,49 +365,5 @@ public class ZuercherArrest {
     //        String offense = row.getAs( IntegrationAliases.STATUTE_COL );
     //
     //    }
-
-    public static String getFulladdress( Row row ) {
-        String street = row.getAs( IntegrationAliases.ADDRESS_COL );
-        String city = row.getAs( IntegrationAliases.CITY_COL );
-        String state = row.getAs( IntegrationAliases.STATE_COL );
-        String zipcode = row.getAs( IntegrationAliases.ZIP_COL );
-
-        if ( getAddress( street, city, state, zipcode ).isEmpty() ) {
-            return "";
-        }
-        return getAddress( street, city, state, zipcode );
-    }
-
-    public static String getFullAddressAsString( Map<String, Object> row ) {
-        String street = Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.ADDRESS_COL ) ) ).orElse( "" );
-        String city = Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.CITY_COL ) ) ).orElse( "" );
-        String state = Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.STATE_COL ) ) ).orElse( "" );
-        String zipcode = Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.ZIP_COL ) ) ).orElse( "" );
-
-        return getAddress( street, city, state, zipcode );
-    }
-
-    public static String getAddress( String street, String city, String state, String zipcode ) {
-        if ( street != null ) {
-            StringBuilder address = new StringBuilder( StringUtils.defaultString( street ) );
-            address.append( ", " ).append( StringUtils.defaultString( city ) ).append( ", " )
-                    .append( StringUtils.defaultString( state ) ).append( " " )
-                    .append( StringUtils.defaultString( zipcode ) );
-
-            return address.toString();
-        } else if ( city != null ) {
-            StringBuilder address = new StringBuilder( StringUtils.defaultString( city ) );
-            address.append( ", " ).append( StringUtils.defaultString( state ) ).append( " " )
-                    .append( StringUtils.defaultString( zipcode ) );
-            return address.toString();
-        } else if ( state != null ) {
-            StringBuilder address = new StringBuilder( StringUtils.defaultString( state ) );
-            address.append( " " ).append( StringUtils.defaultString( zipcode ) );
-            return state;
-        } else if ( zipcode != null ) {
-            return StringUtils.defaultString( zipcode );
-        }
-        return null;
-    }
 
 }
