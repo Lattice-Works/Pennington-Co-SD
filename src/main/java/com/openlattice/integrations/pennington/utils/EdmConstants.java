@@ -63,7 +63,7 @@ public class EdmConstants {
     public static final String NAME_FQN                 = "ol.name";
     public static final String NICKNAME_FQN             = "im.PersonNickName";
     public static final String NUM_OF_CHARGES_FQN       = "publicsafety.NumberOfCharges";
-    public static final String NUM_OF_COUNTS_FQN        = "im.PersonNickName";
+    public static final String NUM_OF_COUNTS_FQN        = "ol.numberofcounts";
 
     public static final String OL_ID_FQN                = "ol.id";
 
