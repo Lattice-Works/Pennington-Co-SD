@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.data.UpdateType;
+import com.openlattice.integrations.pennington.utils.EdmConstants;
+import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
@@ -44,17 +46,17 @@ public class ZuercherArrest {
 
     private static final Map<County, IntegrationConfiguration> CONFIGURATIONS = ImmutableMap.of(
             County.pennington, new IntegrationConfiguration(
-                    "southdakotapeople",
+                    EdmConstants.PEOPLE_ENTITY_SET,
                     "PenZuercherIncident",
                     "PenZuercherCharge",
                     "PenZuercherPretrialCase",
                     "PenZuercherAddress",
-                    "southdakotacontactinformation",
+                    EdmConstants.CONTACT_INFO_ENTITY_SET,
                     "PenZuercherArrests",
                     "PenZuercherchargedwith",
                     "PenZuercherAppearsin",
                     "PenZLivesAt",
-                    "southdakotacontactinfogiven"
+                    EdmConstants.CONTACT_INFO_GIVEN_ENTITY_SET
             ),
             County.minnehaha, new IntegrationConfiguration(
                     "southdakotapeople",
@@ -62,17 +64,15 @@ public class ZuercherArrest {
                     "Minnehaha County, SD_app_arrestcharges",
                     "Minnehaha County, SD_app_arrestpretrialcases",
                     "Minnehaha County, SD_app_address",
-                    "southdakotacontactinformation",
+                    EdmConstants.CONTACT_INFO_ENTITY_SET,
                     "Minnehaha County, SD_app_arrestedin",
                     "Minnehaha County, SD_app_arrestchargedwith",
                     "Minnehaha County, SD_app_appearsinarrest",
                     "Minnehaha County, SD_app_livesat_arrest",
-                    "southdakotacontactinfogiven"
+                    EdmConstants.CONTACT_INFO_GIVEN_ENTITY_SET
             )
     );
 
-    private static final String CONTACT_INFO_NAME       = "southdakotacontactinformation";
-    private static final String CONTACT_INFO_GIVEN_NAME = "southdakotacontactinfogiven";
 
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
     // with anything (even nothing) in between them
@@ -95,127 +95,109 @@ public class ZuercherArrest {
         Flight arrestsflight = Flight.newFlight()
                 .createEntities()
 
-                .addEntity( "arrestee")
+                .addEntity( IntegrationAliases.ARRESTEE_ALIAS)
                     .to( config.getPeople() )
                     .updateType( UpdateType.Merge )
-                    .addProperty( "nc.SSN", "SSN" )
-                    .addProperty( "nc.SubjectIdentification", "PartyID" )
-                    .addProperty( "justice.xref", "Jacket number" )
-                    .addProperty( "nc.PersonSurName", "Last Name" )
-                    .addProperty( "nc.PersonGivenName", "First Name" )
-                    .addProperty( "nc.PersonMiddleName", "Middle Name" )
-                    .addProperty( "im.PersonNickName" ).value( ZuercherArrest::getAliases ).ok()
-                    .addProperty( "nc.SSN", "SSN" )
-                    .addProperty( "nc.PersonRace" )
+                    .addProperty( EdmConstants.SSN_FQN, IntegrationAliases.SSN_COL )
+                    .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.PERSON_ID_COL )
+                    .addProperty( EdmConstants.JACKET_NO_FQN, IntegrationAliases.JACKET_NO_COL )
+                    .addProperty( EdmConstants.LAST_NAME_FQN, IntegrationAliases.LAST_NAME_COL )
+                    .addProperty( EdmConstants.FIRST_NAME_FQN, IntegrationAliases.FIRST_NAME_COL )
+                    .addProperty( EdmConstants.MIDDLE_NAME_FQN, IntegrationAliases.MIDDLE_NAME_COL )
+                    .addProperty( EdmConstants.NICKNAME_FQN ).value( ZuercherArrest::getAliases ).ok()
+                    .addProperty( EdmConstants.SSN_FQN, IntegrationAliases.SSN_COL )
+                    .addProperty( EdmConstants.RACE_FQN )
                         .value( ZuercherArrest::standardRaceList).ok()
-                    .addProperty( "nc.PersonSex")
+                    .addProperty( EdmConstants.GENDER_FQN)
                         .value( ZuercherArrest::standardSex ).ok()
-                    .addProperty( "nc.PersonEthnicity" )
+                    .addProperty( EdmConstants.ETHNICITY_FQN )
                         .value( ZuercherArrest::standardEthnicity).ok()
-                    .addProperty( "nc.PersonBirthDate" )
-                        .value( row -> bdHelper.parseDate( row.getAs("DOB" ) ) ).ok()
+                    .addProperty( EdmConstants.DOB_FQN )
+                        .value( row -> bdHelper.parseDate( row.getAs( IntegrationAliases.DOB_COL ) ) ).ok()
                 .endEntity()
-                .addEntity( "incident" )
+                .addEntity( IntegrationAliases.INCIDENT_ALIAS )
                     .to( config.getIncident() )
                     .updateType( UpdateType.Replace )
-                    .addProperty( "criminaljustice.incidentid", "Case Number" )
-                    .addProperty( "ol.gangactivity", "Other Gang" )
-                    .addProperty( "ol.juvenilegang", "Juvenile Gang" )
-                    .addProperty( "ol.datetimestart" )
-                        .value( row ->  dtHelper.parseDateTime( row.getAs( "Incident Start Date/Time" ) )).ok()
-                    .addProperty( "ol.datetime_reported" )
-                        .value( row -> dtHelper.parseDateTime( row.getAs( "Reported Date/Time" ) ) ).ok()
-                    .addProperty( "publicsafety.drugspresent", "Offender(s) Used Drugs in Crime" )
-                    .addProperty( "ol.alcoholincrime", "Offender(s) Used Alcohol in Crime" )
-                    .addProperty( "ol.computerincrime", "Offender(s) Used Computer Equipment" )
+                    .addProperty( EdmConstants.INCIDENT_ID_FQN, IntegrationAliases.CASE_NUMBER_COL )
+                    .addProperty( EdmConstants.GANG_ACTIVITY_FQN, IntegrationAliases.GANG_ACTIVITY_COL )
+                    .addProperty( EdmConstants.JUVENILE_GANG_FQN, IntegrationAliases.JUVENILE_GANG_COL )
+                    .addProperty( EdmConstants.START_DATETIME_FQN )
+                        .value( row ->  dtHelper.parseDateTime( row.getAs( IntegrationAliases.INCIDENT_START_DATETIME_COL ) )).ok()
+                    .addProperty( EdmConstants.REPORTED_DATETIME_FQN )
+                        .value( row -> dtHelper.parseDateTime( row.getAs( IntegrationAliases.REPORTED_DATETIME_COL ) ) ).ok()
+                    .addProperty( EdmConstants.DRUGS_PRESENT_FQN, IntegrationAliases.DRUGS_USED_COL )
+                    .addProperty( EdmConstants.ALCOHOL_CRIME_FQN, IntegrationAliases.ALCOHOL_USED_COL )
+                    .addProperty( EdmConstants.COMPUTER_CRIME_FQN, IntegrationAliases.COMPUTER_USED_COL )
                 .endEntity()
-                .addEntity( "charge" )
+                .addEntity( IntegrationAliases.CHARGE_ALIAS )
                     .to( config.getCharge() )
                     .updateType( UpdateType.Replace )
-                    .addProperty( "justice.ArrestTrackingNumber" ).value( ZuercherArrest::getChargeId ).ok()
-                    .addProperty( "event.OffenseLocalCodeSection")
+                    .addProperty( EdmConstants.CHARGE_ID_FQN ).value( ZuercherArrest::getChargeId ).ok()
+                    .addProperty( EdmConstants.CHARGE_STATUTE_FQN)
                         .value( ZuercherArrest::localStatute ).ok()
-                    .addProperty( "event.OffenseLocalDescription")
+                    .addProperty( EdmConstants.CHARGE_DESCRIPTION_FQN)
                         .value( ZuercherArrest::offense ).ok()
-                    .addProperty( "ol.numberofcounts", "Offense Count" )
-                    .addProperty( "event.comments", "Offense Details" )
+                    .addProperty( EdmConstants.NUM_OF_COUNTS_FQN, IntegrationAliases.OFFENSE_COUNT_COL )
+                    .addProperty( EdmConstants.COMMENTS_FQN, IntegrationAliases.OFFENSE_NOTES_COL )
                 .endEntity()
-                .addEntity( "pretrialcase" )
+                .addEntity( IntegrationAliases.PRETRIAL_CASE_ALIAS )
                     .to( config.getPretrialCase() )
                     .updateType( UpdateType.Replace )
-                    .entityIdGenerator( row -> Parsers.getAsString( row.get("Arrest Transaction number" ) ) )
-                    .addProperty( "j.CaseNumberText").value( row -> Parsers.getAsString( row.getAs("Arrest Transaction number" ) ) ).ok()
-                    .addProperty( "ol.name", "Case Number" )
-                    .addProperty( "ol.arrestdatetime" )
-                        .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
-                    .addProperty( "publicsafety.NumberOfCharges" ).value( row -> Parsers.parseInt( row.getAs( "ChargeCount" ) ) ).ok()
-                    .addProperty( "criminaljustice.arrestagency", "Abbreviation" )
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get(IntegrationAliases.ARREST_TRANSACTION_NO_COL ) ) )
+                    .addProperty( EdmConstants.CASE_NO_FQN).value( row -> Parsers.getAsString( row.getAs(IntegrationAliases.ARREST_TRANSACTION_NO_COL ) ) ).ok()
+                    .addProperty( EdmConstants.NAME_FQN, IntegrationAliases.CASE_NUMBER_COL )
+                    .addProperty( EdmConstants.ARREST_DATETIME_FQN )
+                        .value( row -> dtHelper.parseDateTime( row.getAs( IntegrationAliases.ARREST_DATETIME_COL )) ).ok()
+                    .addProperty( EdmConstants.NUM_OF_CHARGES_FQN ).value( row -> Parsers.parseInt( row.getAs( IntegrationAliases.CHARGE_COUNT_COL ) ) ).ok()
+                    .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, IntegrationAliases.ABBREVIATION_COL )
                 .endEntity()
-                .addEntity( "address" )
-                    .to( config.getAddress() )
-                    .updateType( UpdateType.Merge )
-                    .addProperty( "location.Address")
-                        .value( ZuercherArrest::getFulladdress ).ok()
-                    .addProperty( "location.city", "City" )
-                    .addProperty( "location.state", "State" )
-                    .addProperty( "location.zip", "ZIP")
-                .endEntity()
-                .addEntity( "contactInfo" )
+                .addEntity( IntegrationAliases.CONTACT_INFO_ALIAS )
                     .to( config.getContactInformation() )
                     .updateType( UpdateType.Replace )
-                    .addProperty( "general.id").value( ZuercherArrest::formatPhoneNumber ).ok()
-                    .addProperty( "contact.phonenumber" ).value( ZuercherArrest::formatPhoneNumber ).ok()
-                    .addProperty( "contact.cellphone", "isMobile" )
-                    .addProperty( "ol.preferred", "preferred" )
+                    .addProperty( EdmConstants.GENERAL_ID_FQN).value( ZuercherArrest::formatPhoneNumber ).ok()
+                    .addProperty( EdmConstants.PHONE_FQN ).value( ZuercherArrest::formatPhoneNumber ).ok()
+                    .addProperty( EdmConstants.CELL_PHONE_FQN, IntegrationAliases.IS_MOBILE_COL )
+                    .addProperty( EdmConstants.PREFERRED_FQN, IntegrationAliases.IS_PREFERRED_COL )
                 .endEntity()
 
                 .endEntities()
                 .createAssociations()
 
-                .addAssociation( "arrestedin" )
+                .addAssociation( IntegrationAliases.ARRESTED_IN_ALIAS )
                     .to( config.getArrests() )
                     .updateType( UpdateType.Replace )
-                    .fromEntity( "arrestee" )
-                    .toEntity( "incident" )
-                    .addProperty( "ol.arrestdatetime" )
-                        .value( row -> dtHelper.parseDateTime( row.getAs( "Arrest Date/Time" )) ).ok()
-                    .addProperty( "nc.SubjectIdentification", "PartyID" )
-                    .addProperty( "person.ageatevent", "Age When Arrested" )
-                    .addProperty( "criminaljustice.arrestagency", "Abbreviation" )
+                    .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
+                    .toEntity( IntegrationAliases.INCIDENT_ALIAS )
+                    .addProperty( EdmConstants.ARREST_DATETIME_FQN )
+                        .value( row -> dtHelper.parseDateTime( row.getAs( IntegrationAliases.ARREST_DATETIME_COL )) ).ok()
+                    .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.PERSON_ID_COL )
+                    .addProperty( EdmConstants.AGE_AT_EVENT_FQN, IntegrationAliases.AGE_AT_ARREST_COL )
+                    .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, IntegrationAliases.ABBREVIATION_COL )
                 .endAssociation()
-                .addAssociation( "chargedwith" )
+                .addAssociation( IntegrationAliases.CHARGED_WITH_ALIAS )
                     .to( config.getChargedWith() )
                     .updateType( UpdateType.Replace )
-                    .fromEntity( "arrestee" )
-                    .toEntity( "charge" )
-                .entityIdGenerator( row -> Optional.ofNullable( Parsers.getAsString( row.get( "SSN" ) ) ).orElse( "" ) + Optional.ofNullable( Parsers.getAsString( row.get( "Statute/Offense" ) ) ).orElse( "" ) )
-                .addProperty( "general.stringid" , "PartyID")
-                    .addProperty( "event.ChargeLevel" )
+                    .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
+                    .toEntity( IntegrationAliases.CHARGE_ALIAS )
+                .entityIdGenerator( row -> Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.SSN_COL ) ) ).orElse( "" ) + Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.STATUTE_COL ) ) ).orElse( "" ) )
+                .addProperty( EdmConstants.STRING_ID_FQN , IntegrationAliases.PERSON_ID_COL)
+                    .addProperty( EdmConstants.CHARGE_LEVEL_FQN )
                         .value( ZuercherArrest::chargeLevel ).ok()
                 .endAssociation()
-                .addAssociation( "appearsin" )
+                .addAssociation( IntegrationAliases.APPEARS_IN_ALIAS )
                     .to( config.getAppearsIn() )
                     .updateType( UpdateType.Replace )
-                    .fromEntity( "arrestee" )
-                    .toEntity( "pretrialcase" )
-                    .addProperty( "general.stringid" )
-                        .value( row -> Parsers.getAsString( row.getAs( "Arrest Transaction number" )) + Parsers.getAsString( row.getAs( "PartyID" )) ).ok()
+                    .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
+                    .toEntity( IntegrationAliases.PRETRIAL_CASE_ALIAS )
+                    .addProperty( EdmConstants.STRING_ID_FQN )
+                        .value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.ARREST_TRANSACTION_NO_COL )) + Parsers.getAsString( row.getAs( IntegrationAliases.PERSON_ID_COL )) ).ok()
                 .endAssociation()
-                .addAssociation( "livesat" )
-                    .to( config.getLivesAt() )
-                    .updateType( UpdateType.Replace )
-                    .fromEntity( "arrestee" )
-                    .toEntity( "address" )
-                    .entityIdGenerator( row -> row.get( "PartyID" ) +  getFullAddressAsString( row ) )
-                    .addProperty( "general.stringid")
-                        .value( ZuercherArrest::getFulladdress ).ok()
-                .endAssociation()
-                .addAssociation( "hasContact" )
+                .addAssociation( IntegrationAliases.HAS_CONTACT_ALIAS )
                     .to( config.getContactInformationGiven() )
                     .updateType( UpdateType.Replace )
-                    .fromEntity( "arrestee" )
-                    .toEntity( "contactInfo" )
-                    .addProperty( "ol.id" ).value( ZuercherArrest::formatPhoneNumber ).ok()
+                    .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
+                    .toEntity( IntegrationAliases.CONTACT_INFO_ALIAS )
+                    .addProperty( EdmConstants.OL_ID_FQN ).value( ZuercherArrest::formatPhoneNumber ).ok()
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -232,7 +214,7 @@ public class ZuercherArrest {
     }
 
     public static String formatPhoneNumber( Row row ) {
-        String phoneNumber = Parsers.getAsString( row.getAs( "Phone" ) );
+        String phoneNumber = Parsers.getAsString( row.getAs( IntegrationAliases.PHONE_COL ) );
         if ( StringUtils.isNotBlank( phoneNumber ) ) {
             String numbersOnly = phoneNumber.replaceAll( "[^0-9]", "" );
             if ( numbersOnly.length() == 10 ) {
@@ -251,7 +233,7 @@ public class ZuercherArrest {
     }
 
     public static List<String> getAliases( Row row ) {
-        String aliases = Parsers.getAsString( row.getAs( "Aliases" ) );
+        String aliases = Parsers.getAsString( row.getAs( IntegrationAliases.ALIASES_COL ) );
         if ( StringUtils.isNotBlank( aliases ) ) {
             return Lists.newArrayList( aliases.split( "\\|" ) );
         }
@@ -260,16 +242,16 @@ public class ZuercherArrest {
     }
 
     public static String getChargeId( Row row ) {
-        String caseNumber = Parsers.getAsString( row.getAs( "Arrest Transaction number" ) );
-        String personId = Parsers.getAsString( row.getAs( "PartyID" ) );
-        String statuteOffense = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
-        String chargeNum = Parsers.getAsString( row.getAs( "ChargeNumber" ) );
+        String caseNumber = Parsers.getAsString( row.getAs( IntegrationAliases.ARREST_TRANSACTION_NO_COL ) );
+        String personId = Parsers.getAsString( row.getAs( IntegrationAliases.PERSON_ID_COL ) );
+        String statuteOffense = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
+        String chargeNum = Parsers.getAsString( row.getAs( IntegrationAliases.CHARGE_NO_COL ) );
 
         return caseNumber + "|" + personId + "|" + statuteOffense + "|" + chargeNum;
     }
 
     public static List standardRaceList( Row row ) {
-        String sr = row.getAs( "Race" );
+        String sr = row.getAs( IntegrationAliases.RACE_COL );
 
         if ( sr != null ) {
 
@@ -298,7 +280,7 @@ public class ZuercherArrest {
     }
 
     public static String standardEthnicity( Row row ) {
-        String eth = row.getAs( "Ethnicity" );
+        String eth = row.getAs( IntegrationAliases.ETHNICITY_COL );
 
         if ( eth != null ) {
             if ( eth.equals( "Hispanic" ) ) { return "hispanic"; }
@@ -312,7 +294,7 @@ public class ZuercherArrest {
     }
 
     public static String standardSex( Row row ) {
-        String sex = row.getAs( "Sex" );
+        String sex = row.getAs( IntegrationAliases.SEX_COL );
 
         if ( sex != null ) {
             if ( sex.equals( "Male" ) ) {return "M"; }
@@ -325,7 +307,7 @@ public class ZuercherArrest {
     }
 
     public static String localStatute( Row row ) {
-        String statoff = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        String statoff = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
         if ( statoff != null ) {
             String[] statutesplit = statoff.split( " " );
             String statute = statutesplit[ 0 ];                //SAVE 1ST ELEMENT IN ARRAY AS A STRING
@@ -339,7 +321,7 @@ public class ZuercherArrest {
     }
 
     public static String chargeLevel( Row row ) {
-        String all = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        String all = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
         if ( StringUtils.isNotBlank( all ) && StringUtils.isNotBlank( all.trim() ) ) {
             all = all.trim();
             String[] splitlevel = all.split( " " );
@@ -359,7 +341,7 @@ public class ZuercherArrest {
     //split on string, get an array.
     // string 0 is statute, string 1 goes away. String length-1 is degree level, string 2-length-2 is the middle. Join on spaces (put back as string)
     public static String offense( Row row ) {
-        String offenseStr = Parsers.getAsString( row.getAs( "Statute/Offense" ) );
+        String offenseStr = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
         if ( StringUtils.isNotBlank( offenseStr ) && StringUtils.isNotBlank( offenseStr.trim() ) ) {
             offenseStr = offenseStr.trim();
 
@@ -379,53 +361,9 @@ public class ZuercherArrest {
     //        if (chargeCounts.containsKey( casenumber )) {
     //
     //        }
-    //        String person = row.getAs( "SSN" );
-    //        String offense = row.getAs( "Statute/Offense" );
+    //        String person = row.getAs( IntegrationAliases.SSN_COL );
+    //        String offense = row.getAs( IntegrationAliases.STATUTE_COL );
     //
     //    }
-
-    public static String getFulladdress( Row row ) {
-        String street = row.getAs( "Address" );
-        String city = row.getAs( "City" );
-        String state = row.getAs( "State" );
-        String zipcode = row.getAs( "ZIP" );
-
-        if ( getAddress( street, city, state, zipcode ).isEmpty() ) {
-            return "";
-        }
-        return getAddress( street, city, state, zipcode );
-    }
-
-    public static String getFullAddressAsString( Map<String, Object> row ) {
-        String street = Optional.ofNullable( Parsers.getAsString( row.get( "Address" ) ) ).orElse( "" );
-        String city = Optional.ofNullable( Parsers.getAsString( row.get( "City" ) ) ).orElse( "" );
-        String state = Optional.ofNullable( Parsers.getAsString( row.get( "State" ) ) ).orElse( "" );
-        String zipcode = Optional.ofNullable( Parsers.getAsString( row.get( "ZIP" ) ) ).orElse( "" );
-
-        return getAddress( street, city, state, zipcode );
-    }
-
-    public static String getAddress( String street, String city, String state, String zipcode ) {
-        if ( street != null ) {
-            StringBuilder address = new StringBuilder( StringUtils.defaultString( street ) );
-            address.append( ", " ).append( StringUtils.defaultString( city ) ).append( ", " )
-                    .append( StringUtils.defaultString( state ) ).append( " " )
-                    .append( StringUtils.defaultString( zipcode ) );
-
-            return address.toString();
-        } else if ( city != null ) {
-            StringBuilder address = new StringBuilder( StringUtils.defaultString( city ) );
-            address.append( ", " ).append( StringUtils.defaultString( state ) ).append( " " )
-                    .append( StringUtils.defaultString( zipcode ) );
-            return address.toString();
-        } else if ( state != null ) {
-            StringBuilder address = new StringBuilder( StringUtils.defaultString( state ) );
-            address.append( " " ).append( StringUtils.defaultString( zipcode ) );
-            return state;
-        } else if ( zipcode != null ) {
-            return StringUtils.defaultString( zipcode );
-        }
-        return null;
-    }
 
 }
