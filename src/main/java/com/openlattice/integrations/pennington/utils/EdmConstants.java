@@ -4,6 +4,7 @@ public class EdmConstants {
 
     public static final String ADDRESSES_ENTITY_SET             = "southdakotaaddresses";
     public static final String APPEARS_IN_ENTITY_SET            = "southdakotaappearsin";
+    public static final String CHARGED_WITH_ENTITY_SET          = "southdakotachargedwith";
     public static final String CONTACT_INFO_ENTITY_SET          = "southdakotacontactinformation";
     public static final String CONTACT_INFO_GIVEN_ENTITY_SET    = "southdakotacontactinfogiven";
     public static final String CASES_ENTITY_SET                 = "southdakotapretrialcaseprocessings";
@@ -16,7 +17,33 @@ public class EdmConstants {
     public static final String OVERSEES_ENTITY_SET              = "southdakotaoversees";
     public static final String PEOPLE_ENTITY_SET                = "southdakotapeople";
 
+
+    public static final String PENNINGTON_APPEARS_IN_ENTITY_SET             = "Pennington County, SD_app_appearsin";
+    public static final String PENNINGTON_ASSESSED_BY_ENTITY_SET            = "Pennington County, SD_app_assessedby";
+    public static final String PENNINGTON_RCM_RESULTS_ENTITY_SET            = "Pennington County, SD_app_rcm";
+    public static final String PENNINGTON_RCM_RISK_FACTORS_ENTITY_SET       = "Pennington County, SD_app_rcmriskfactors";
+    public static final String PENNINGTON_PSA_ENTITY_SET                    = "Pennington County, SD_app_psascores";
+    public static final String PENNINGTON_PSA_RISK_FACTORS_ENTITY_SET       = "Pennington County, SD_app_psariskfactors";
+    public static final String PENNINGTON_MANUAL_PRETRIAL_CASES_ENTITY_SET  = "Pennington County, SD_app_manualpretrialcases";
+    public static final String PENNINGTON_MANUAL_CHARGES_ENTITY_SET         = "Pennington County, SD_app_manualcharges";
+    public static final String PENNINGTON_PSA_NOTES_ENTITY_SET              = "Pennington County, SD_app_psanotes";
+    public static final String PENNINGTON_STAFF_ENTITY_SET                  = "Pennington County, SD_app_staff";
+    public static final String PENNINGTON_CALCULATED_FOR_ENTITY_SET         = "Pennington County, SD_app_calculatedfor";
+
+    public static final String MINNEHAHA_APPEARS_IN_ENTITY_SET              = "Minnehaha County, SD_app_appearsin";
+    public static final String MINNEHAHA_ASSESSED_BY_ENTITY_SET             = "Minnehaha County, SD_app_assessedby";
+    public static final String MINNEHAHA_RCM_RESULTS_ENTITY_SET             = "Minnehaha County, SD_app_rcm";
+    public static final String MINNEHAHA_RCM_RISK_FACTORS_ENTITY_SET        = "Minnehaha County, SD_app_rcmriskfactors";
+    public static final String MINNEHAHA_PSA_ENTITY_SET                     = "Minnehaha County, SD_app_psascores";
+    public static final String MINNEHAHA_PSA_RISK_FACTORS_ENTITY_SET        = "Minnehaha County, SD_app_psariskfactors";
+    public static final String MINNEHAHA_MANUAL_PRETRIAL_CASES_ENTITY_SET   = "Minnehaha County, SD_app_manualpretrialcases";
+    public static final String MINNEHAHA_MANUAL_CHARGES_ENTITY_SET          = "Minnehaha County, SD_app_manualcharges";
+    public static final String MINNEHAHA_PSA_NOTES_ENTITY_SET               = "Minnehaha County, SD_app_psanotes";
+    public static final String MINNEHAHA_STAFF_ENTITY_SET                   = "Minnehaha County, SD_app_staff";
+    public static final String MINNEHAHA_CALCULATED_FOR_ENTITY_SET          = "Minnehaha County, SD_app_calculatedfor";
+
     public static final String ADDRESS_FQN              = "location.Address";
+    public static final String AGE_AT_ARREST_FQN        = "psa.AgeAtCurrentArrest";
     public static final String AGE_AT_EVENT_FQN         = "person.ageatevent";
     public static final String ALCOHOL_CRIME_FQN        = "ol.alcoholincrime";
     public static final String ARREST_DATETIME_FQN      = "ol.arrestdatetime";
@@ -30,10 +57,16 @@ public class EdmConstants {
     public static final String CHARGE_LEVEL_FQN         = "event.ChargeLevel";
     public static final String CHARGE_STATUTE_FQN       = "event.OffenseLocalCodeSection";
     public static final String CITY_FQN                 = "location.city";
+    public static final String COLOR_FQN                = "general.color";
+    public static final String CONDITION_1_FQN          = "justice.condition1";
+    public static final String CONDITION_2_FQN          = "justice.condition1";
+    public static final String CONDITION_3_FQN          = "justice.condition1";
     public static final String COMMENTS_FQN             = "event.comments";
     public static final String COMPLETED_DATETIME_FQN   = "date.completeddatetime";
     public static final String COMPUTER_CRIME_FQN       = "ol.computerincrime";
+    public static final String CONTEXT_FQN              = "general.context";
     public static final String COURTROOM_FQN            = "justice.courtroom";
+    public static final String CURRENT_V_OFFENSE_FQN    = "psa.CurrentViolentOffense";
 
     public static final String DATETIME_FQN             = "general.datetime";
     public static final String DOB_FQN                  = "nc.PersonBirthDate";
@@ -42,7 +75,9 @@ public class EdmConstants {
     public static final String ETHNICITY_FQN            = "nc.PersonEthnicity";
     public static final String EYE_FQN                  = "nc.PersonEyeColorText";
 
+    public static final String FILE_DATE_FQN           = "publicsafety.FileDate";
     public static final String FIRST_NAME_FQN           = "nc.PersonGivenName";
+    public static final String FTA_SCORE_FQN            = "psa.ftaScale";
 
     public static final String GANG_ACTIVITY_FQN        = "ol.gangactivity";
     public static final String GENDER_FQN               = "nc.PersonSex";
@@ -61,27 +96,46 @@ public class EdmConstants {
     public static final String MIDDLE_NAME_FQN          = "nc.PersonMiddleName";
 
     public static final String NAME_FQN                 = "ol.name";
+    public static final String NCA_SCORE_FQN            = "psa.ncaScale";
     public static final String NICKNAME_FQN             = "im.PersonNickName";
     public static final String NUM_OF_CHARGES_FQN       = "publicsafety.NumberOfCharges";
     public static final String NUM_OF_COUNTS_FQN        = "ol.numberofcounts";
+    public static final String NVCA_FLAG_FQN            = "psa.nvcaFlag";
 
     public static final String OL_ID_FQN                = "ol.id";
+    public static final String OLD_FTA_FQN              = "psa.PriorFailureToAppearOlderThanTwoYears";
 
-    public static final String PERSON_ID_FQN            = "nc.SubjectIdentification";
-    public static final String PHONE_FQN                = "contact.phonenumber";
-    public static final String PREFERRED_FQN            = "ol.preferred";
+    public static final String PERSON_ID_FQN                        = "nc.SubjectIdentification";
+    public static final String PENDING_CHARGES_FQN                  = "psa.PendingCharge";
+    public static final String PHONE_FQN                            = "contact.phonenumber";
+    public static final String PREFERRED_FQN                        = "ol.preferred";
+    public static final String PRIOR_CONVICTION_FQN                 = "psa.PriorConviction";
+    public static final String PRIOR_F_CONVICTION_FQN               = "psa.PriorFelonyConviction";
+    public static final String PRIOR_M_CONVICTION_FQN               = "psa.PriorMisdemeanorConviction";
+    public static final String PRIOR_SENTENCE_TO_INCARCERATION_FQN  = "psa.PriorSentenceToIncarceration";
+    public static final String PRIOR_V_CONVICTION_FQN               = "psa.PriorViolentConviction";
 
     public static final String RACE_FQN                 = "nc.PersonRace";
+    public static final String RECENT_FTA_FQN           = "psa.PriorFailureToAppearWithinTwoYears";
+    public static final String RECOMMENDATION_FQN       = "publicsafety.recommendation";
     public static final String REPORTED_DATETIME_FQN    = "ol.datetime_reported";
+    public static final String RELEASE_TYPE_FQN         = "criminaljustice.releasetype";
     public static final String ROOM_NO_FQN              = "ol.roomnumber";
 
     public static final String SSN_FQN                  = "nc.SSN";
     public static final String START_DATETIME_FQN       = "ol.datetimestart";
     public static final String STATE_FQN                = "location.state";
+    public static final String STATUS_FQN               = "general.status";
+    public static final String STEP_2_FQN               = "justice.dmfstep2";
+    public static final String STEP_4_FQN               = "justice.dmfstep4";
     public static final String STRING_ID_FQN            = "general.stringid";
     public static final String SUFFIX_FQN               = "nc.PersonSuffix";
 
+    public static final String TIMESTAMP_FQN            = "psa.GeneratedDate";
+
     public static final String UPDATE_FQN               = "ol.update";
+
+    public static final String VIOLENT_AND_YOUNG_FQN    = "psa.CurrentViolentOffenseAnd20OrYounger";
 
     public static final String WEIGHT_FQN               = "nc.PersonWeightMeasure";
 
