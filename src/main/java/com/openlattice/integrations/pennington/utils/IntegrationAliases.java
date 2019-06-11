@@ -159,6 +159,6 @@ public class IntegrationAliases {
     public static final String RCM_RISK_FACTORS_ID_COLUMN = "rcmRiskFactorsId";
     public static final String PSA_RISK_FACTORS_ID_COLUMN = "psaRiskFactorsId";
     public static final String PSA_NOTES_ID_COLUMN = "psaNotesId";
-    public static final String PSA_ID_COLUMN = "psaId";
+    public static final String PSA_ID_COLUMN = "psaID";
 
 }
