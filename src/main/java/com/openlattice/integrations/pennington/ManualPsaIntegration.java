@@ -123,10 +123,10 @@ public class ManualPsaIntegration {
 
                 .addEntity( IntegrationAliases.PERSON_ALIAS)
                     .to( config.getPeople() )
-                    .updateType( UpdateType.Merge )
+                    .updateType( UpdateType.Replace )
                     .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.PERSON_ID_COL )
-                    .addProperty( EdmConstants.LAST_NAME_FQN, IntegrationAliases.LAST_NAME_COLUMN )
-                    .addProperty( EdmConstants.FIRST_NAME_FQN, IntegrationAliases.FIRST_NAME_COLUMN )
+                    .addProperty( EdmConstants.LAST_NAME_FQN ).value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.LAST_NAME_COLUMN ) ) ).ok()
+                    .addProperty( EdmConstants.FIRST_NAME_FQN ).value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.FIRST_NAME_COLUMN ) ) ).ok()
                     .addProperty( EdmConstants.RACE_FQN )
                         .value( ManualPsaIntegration::standardRaceList).ok()
                     .addProperty( EdmConstants.GENDER_FQN)
