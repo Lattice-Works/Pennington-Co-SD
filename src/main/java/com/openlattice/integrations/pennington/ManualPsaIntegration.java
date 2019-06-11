@@ -461,6 +461,37 @@ public class ManualPsaIntegration {
         return caseNumber + "|" + chargeNum;
     }
 
+    public static String getRecentFtaField( Row row ) {
+        Integer recentFTACount = Parsers.parseInt( row.getAs( IntegrationAliases.RECENT_FTA_COLUMN ) );
+
+
+        if ( recentFTACount != null && recentFTACount > 1 ) { return "2 or more"; };
+
+        return Parsers.getAsString( recentFTACount );
+    }
+
+    public static String getPriorViolentConvictionField( Row row ) {
+        Integer priorViolentConviction = Parsers.parseInt( row.getAs( IntegrationAliases.PRIOR_VIOLENT_COLUMN ) );
+
+
+        if ( priorViolentConviction != null && priorViolentConviction > 2 ) { return "3 or more"; };
+
+        return Parsers.getAsString( priorViolentConviction );
+    }
+
+    public static String getAgeAtCurrentArrestField( Row row ) {
+        Integer ageAtCurrentArrest = Parsers.parseInt( row.getAs( IntegrationAliases.AGE_AT_ARREST_COLUMN ) );
+
+
+        if ( ageAtCurrentArrest != null) {
+            if (ageAtCurrentArrest < 21 ) { return "20 or Younger"; };
+            if (ageAtCurrentArrest > 20 && ageAtCurrentArrest < 23) { return "21 or 22"; };
+            if (ageAtCurrentArrest > 22 ) { return "23 or Older"; };
+        }
+
+        return null;
+    }
+
     public static List standardRaceList( Row row ) {
         String sr = row.getAs( IntegrationAliases.RACE_COL );
 
