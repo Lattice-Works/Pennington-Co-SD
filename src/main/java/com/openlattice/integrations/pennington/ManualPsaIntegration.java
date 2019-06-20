@@ -41,7 +41,7 @@ public class ManualPsaIntegration {
             "MM/dd/yyyy" );
 
     private static final JavaDateTimeHelper dtHelper_yyyy_MM_dd_HH_mm_ss = new JavaDateTimeHelper( TimeZones.America_Denver,
-            "yyyy-MM-dd HH:mm:ss" );
+            "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSSSSS" );
 
     private static final Map<County, ManualPSAIntegrationConfiguration> CONFIGURATIONS = ImmutableMap.of(
             County.pennington, new ManualPSAIntegrationConfiguration(
@@ -58,19 +58,6 @@ public class ManualPsaIntegration {
                     EdmConstants.PENNINGTON_CALCULATED_FOR_ENTITY_SET,
                     EdmConstants.CHARGED_WITH_ENTITY_SET,
                     EdmConstants.PENNINGTON_APPEARS_IN_ENTITY_SET
-//                    "southdakotapeople",
-//                    "southdakotapsas",
-//                    "southdakotapsariskfactors",
-//                    "southdakotareleaserecommendations",
-//                    "southdakotadmfs",
-//                    "southdakotadmfriskfactors",
-//                    "southdakotamanualpretrialcaseprocessings",
-//                    "southdakotamanualcharges",
-//                    "southdakotastaff",
-//                    "southdakotaassessedby",
-//                    "southdakotacalculatedfor",
-//                    "southdakotachargedwith",
-//                    "southdakotaappearsin"
             ),
             County.minnehaha, new ManualPSAIntegrationConfiguration(
                     EdmConstants.PEOPLE_ENTITY_SET,
@@ -94,25 +81,25 @@ public class ManualPsaIntegration {
             County.minnehaha, "jingalls@minnehahacounty.org"
     );
 
+    private static final Map<County, String> COUNTIES = ImmutableMap.of(
+            County.pennington, "Court (Pennington)" ,
+            County.minnehaha, "Court (Minnehaha)"
+    );
+
 
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
     // with anything (even nothing) in between them
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
-//
+
         final String username = args[ 0 ];
         final String password = args[ 1 ];
         final String psaPath = args[ 2 ];
 
         String jwtToken = MissionControl.getIdToken( username, password );
 
-//        final String psaPath = "/Users/toddbergman/Desktop/psasWithIds/testPSAs - Sheet1.csv";
-//        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6IktUemd5eHM2S0JjSkhCODcyZVNNZTJjcFRIemh4Uzk5IiwiaWF0IjoxNTU5NjcwNjQ1LCJleHAiOjE1NTk3NTcwNDV9.AEydvy5cSTiBGds0AaSVdfb3wZDJf3RIIZIBlNUbCQQ";
+        SimplePayload payload = new SimplePayload( psaPath );
 
-        Payload payload = new SimplePayload( psaPath );
-//        SimplePayload payload = new SimplePayload( psaPath );
-
-//        final ManualPSAIntegrationConfiguration config = CONFIGURATIONS.get( County.pennington );
         final ManualPSAIntegrationConfiguration config = CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
@@ -159,8 +146,7 @@ public class ManualPsaIntegration {
                     .addProperty( EdmConstants.RECENT_FTA_FQN).value( ManualPsaIntegration::getRecentFtaField ).ok()
                     .addProperty( EdmConstants.OLD_FTA_FQN , IntegrationAliases.OLD_FTA_COLUMN )
                     .addProperty( EdmConstants.PENDING_CHARGES_FQN , IntegrationAliases.PENDING_CHARGES_COLUMN )
-//                    .addProperty( EdmConstants.CONTEXT_FQN ).value( row -> County.valueOf( args[ 3 ] ) ).ok()
-                    .addProperty( EdmConstants.CONTEXT_FQN ).value( row -> "Court (Pennington)" ).ok()
+                    .addProperty( EdmConstants.CONTEXT_FQN ).value( row -> County.valueOf( args[ 3 ] ) ).ok()
                     .addProperty( EdmConstants.CURRENT_V_OFFENSE_FQN , IntegrationAliases.CURRENT_VIOLENT_OFFENSE_COLUMN )
                     .addProperty( EdmConstants.AGE_AT_ARREST_FQN ).value( ManualPsaIntegration::getAgeAtCurrentArrestField ).ok()
                     .addProperty( EdmConstants.VIOLENT_AND_YOUNG_FQN )
@@ -191,8 +177,7 @@ public class ManualPsaIntegration {
                     .entityIdGenerator( row -> Parsers.getAsString( row.get(IntegrationAliases.RCM_RISK_FACTORS_ID_COLUMN ) ) )
                     .addProperty( EdmConstants.STEP_2_FQN, IntegrationAliases.STEP2_COLUMN )
                     .addProperty( EdmConstants.STEP_4_FQN, IntegrationAliases.STEP4_COLUMN )
-                    .addProperty( EdmConstants.CONTEXT_FQN ).value( row -> "Court (Pennington)" ).ok()
-//                    .addProperty( EdmConstants.CONTEXT_FQN ).value( row -> County.valueOf( args[ 3 ] ) ).ok()
+                    .addProperty( EdmConstants.CONTEXT_FQN ).value( row -> County.valueOf( args[ 3 ] ) ).ok()
                     .addProperty( EdmConstants.GENERAL_ID_FQN, IntegrationAliases.RCM_RISK_FACTORS_ID_COLUMN )
                 .endEntity()
                 .addEntity( IntegrationAliases.MANUAL_PRETRIAL_CASE_ALIAS )
@@ -220,7 +205,6 @@ public class ManualPsaIntegration {
                     .to( config.getStaff() )
                     .updateType( UpdateType.Replace )
                     .addProperty( EdmConstants.PERSON_ID_FQN ).value( row -> EMAILS.get( County.valueOf( args[ 3 ] ) ) ).ok()
-//                    .addProperty( EdmConstants.PERSON_ID_FQN ).value( row -> "mark.hirsch@pennco.org" ).ok()
                 .endEntity()
                 .endEntities()
 
