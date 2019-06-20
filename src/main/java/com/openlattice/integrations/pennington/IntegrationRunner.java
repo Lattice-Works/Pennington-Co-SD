@@ -23,6 +23,11 @@ public class IntegrationRunner {
 
         switch ( integrationType ) {
 
+
+            case PSAS:
+                ManualPsaIntegration.integrate( requestArgs );
+                break;
+
             case ARRESTS:
                 ZuercherArrest.integrate( requestArgs );
                 break;
