@@ -1,5 +1,6 @@
 package com.openlattice.integrations.pennington;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -433,7 +434,7 @@ public class ManualPsaIntegration {
         Map<Flight, Payload> flights = new HashMap<>( 1 );
         flights.put( psaFlight, payload );
 
-        missionControl.prepare( flights, false, ImmutableSet.of() ).launch( 10000 );
+        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10000 );
         MissionControl.succeed();
     }
 
