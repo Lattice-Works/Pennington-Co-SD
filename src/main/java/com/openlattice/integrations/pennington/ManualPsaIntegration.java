@@ -29,11 +29,6 @@ import java.util.stream.Collectors;
  * @author Todd Bergman &lt;todd@openlattice.com&gt;
  */
 
-enum County {
-    pennington,
-    minnehaha
-}
-
 public class ManualPsaIntegration {
     private static final Logger                      logger      = LoggerFactory.getLogger( ManualPsaIntegration.class );
     private static final  RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
