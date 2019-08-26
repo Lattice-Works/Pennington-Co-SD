@@ -166,8 +166,7 @@ public class MinPennHearings {
         MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
         Map<Flight, Payload>  flights = new HashMap<>( 1 );
         flights.put( hearingsflight, payload );
-
-        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10000 );
+        missionControl.prepare( flights, false, List.of(), Set.of() ).launch( 150 );
         MissionControl.succeed();
 
     }
