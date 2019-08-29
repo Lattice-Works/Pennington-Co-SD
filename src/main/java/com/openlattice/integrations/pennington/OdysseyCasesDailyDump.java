@@ -18,29 +18,28 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OdysseyCasesDailyDump {
 
     protected static final Logger logger = LoggerFactory.getLogger( OdysseyCasesDailyDump.class );
 
-    public static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
+    public static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.LOCAL;
 
     private static final DateTimeHelper bdHelper = new DateTimeHelper( DateTimeZone.forOffsetHours( -6 ),
             "yyyy-MM-dd HH:mm:ss" );
 
     private static final SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 
-    public static void integrate( String[] args ) throws InterruptedException, IOException {
+    public static void integrate() throws InterruptedException, IOException {
 
-        final String username = args[ 0 ];
-        final String password = args[ 1 ];
-        final String filePath = args[ 2 ];
+//        final String username = args[ 0 ];
+//        final String password = args[ 1 ];
+        final String filePath = "/Users/toddbergman/Desktop/All_M1_Felonies20190305.csv";
 
-        final String jwtToken = MissionControl.getIdToken( username, password );
+//        final String jwtToken = MissionControl.getIdToken( username, password );
+        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6Im84WTJVMnpiNUl3bzAxamR4TU4xVzJhaU44UHh3VmpoIiwiaWF0IjoxNTY3MDA4NjMyLCJleHAiOjE1NjcwNDQ2MzJ9.vmYH3NuKf0xNcnsVzrRxcLoeA7QHA0z-yOLnreRFsI8";
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
@@ -102,8 +101,8 @@ public class OdysseyCasesDailyDump {
         MissionControl missionControl = new MissionControl( environment,
                 () -> jwtToken,
                 "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
-
         missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of()).launch( 150 );
+        MissionControl.succeed();
 
     }
 

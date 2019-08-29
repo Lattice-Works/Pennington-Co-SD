@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Kim Engie &lt;kim@openlattice.com&gt;
@@ -39,13 +37,14 @@ public class MinPennHearings {
 
     private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver, "MM/dd/yyyy" );
 
-    public static void integrate( String[] args ) throws InterruptedException, IOException {
+    public static void integrate() throws InterruptedException, IOException {
 
-        final String username = args[ 0 ];
-        final String password = args[ 1 ];
-        final String hearingsPath = args[ 2 ];
+//        final String username = args[ 0 ];
+//        final String password = args[ 1 ];
+        final String hearingsPath = "/Users/toddbergman/Desktop/MinnPennDailyHearings20190826.csv";
         SimplePayload payload = new SimplePayload( hearingsPath );
-        String jwtToken = MissionControl.getIdToken( username, password );
+//        String jwtToken = MissionControl.getIdToken( username, password );
+        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6Im84WTJVMnpiNUl3bzAxamR4TU4xVzJhaU44UHh3VmpoIiwiaWF0IjoxNTY3MDMwNTk3LCJleHAiOjE1NjcwNjY1OTd9.2ibMrZK2wTgaHyjlQuziZzPqc6rOHq0-Zg_hgWI8Fhc";
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
@@ -166,7 +165,7 @@ public class MinPennHearings {
         MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
         Map<Flight, Payload>  flights = new HashMap<>( 1 );
         flights.put( hearingsflight, payload );
-        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 150 );
+        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10 );
         MissionControl.succeed();
 
     }
@@ -187,7 +186,7 @@ public class MinPennHearings {
 
     private static String getCourtroomId( Row row ) {
         String countyPrefix = getCountyPrefix( row );
-        String courtroom = row.getAs( IntegrationAliases.COURTROOM_ALIAS );
+        String courtroom = row.getAs( IntegrationAliases.COURTROOM_COL );
         return countyPrefix + "|" + courtroom;
     }
 
