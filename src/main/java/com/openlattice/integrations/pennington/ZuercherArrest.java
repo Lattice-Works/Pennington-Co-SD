@@ -8,6 +8,7 @@ import com.openlattice.client.RetrofitFactory;
 import com.openlattice.data.UpdateType;
 import com.openlattice.integrations.pennington.utils.EdmConstants;
 import com.openlattice.integrations.pennington.utils.IntegrationAliases;
+import com.openlattice.integrations.pennington.utils.ZuercherConstants;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
@@ -99,14 +100,13 @@ public class ZuercherArrest {
                 .addEntity( IntegrationAliases.ARRESTEE_ALIAS)
                     .to( config.getPeople() )
                     .updateType( UpdateType.Merge )
-                    .addProperty( EdmConstants.SSN_FQN, IntegrationAliases.SSN_COL )
-                    .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.PERSON_ID_COL )
-                    .addProperty( EdmConstants.JACKET_NO_FQN, IntegrationAliases.JACKET_NO_COL )
-                    .addProperty( EdmConstants.LAST_NAME_FQN, IntegrationAliases.LAST_NAME_COL )
-                    .addProperty( EdmConstants.FIRST_NAME_FQN, IntegrationAliases.FIRST_NAME_COL )
-                    .addProperty( EdmConstants.MIDDLE_NAME_FQN, IntegrationAliases.MIDDLE_NAME_COL )
+                    .addProperty( EdmConstants.PERSON_ID_FQN, ZuercherConstants.PARTY_ID )
+                    .addProperty( EdmConstants.JACKET_NO_FQN, ZuercherConstants.PERSON_JACKET_ID )
+                    .addProperty( EdmConstants.LAST_NAME_FQN, ZuercherConstants.LAST_NAME )
+                    .addProperty( EdmConstants.FIRST_NAME_FQN, ZuercherConstants.FIRST_NAME )
+                    .addProperty( EdmConstants.MIDDLE_NAME_FQN, ZuercherConstants.MIDDLE_NAME )
                     .addProperty( EdmConstants.NICKNAME_FQN ).value( ZuercherArrest::getAliases ).ok()
-                    .addProperty( EdmConstants.SSN_FQN, IntegrationAliases.SSN_COL )
+                    .addProperty( EdmConstants.SSN_FQN, ZuercherConstants.SSN )
                     .addProperty( EdmConstants.RACE_FQN )
                         .value( ZuercherArrest::standardRaceList).ok()
                     .addProperty( EdmConstants.GENDER_FQN)
@@ -114,21 +114,21 @@ public class ZuercherArrest {
                     .addProperty( EdmConstants.ETHNICITY_FQN )
                         .value( ZuercherArrest::standardEthnicity).ok()
                     .addProperty( EdmConstants.DOB_FQN )
-                        .value( row -> bdHelper.parseDate( row.getAs( IntegrationAliases.DOB_COL ) ) ).ok()
+                        .value( row -> bdHelper.parseDate( row.getAs( ZuercherConstants.DOB ) ) ).ok()
                 .endEntity()
                 .addEntity( IntegrationAliases.INCIDENT_ALIAS )
                     .to( config.getIncident() )
                     .updateType( UpdateType.Replace )
-                    .addProperty( EdmConstants.INCIDENT_ID_FQN, IntegrationAliases.CASE_NUMBER_COL )
-                    .addProperty( EdmConstants.GANG_ACTIVITY_FQN, IntegrationAliases.GANG_ACTIVITY_COL )
-                    .addProperty( EdmConstants.JUVENILE_GANG_FQN, IntegrationAliases.JUVENILE_GANG_COL )
+                    .addProperty( EdmConstants.INCIDENT_ID_FQN, ZuercherConstants.CASE_NUMBER )
+                    .addProperty( EdmConstants.GANG_ACTIVITY_FQN, ZuercherConstants.OTHER_GANG )
+                    .addProperty( EdmConstants.JUVENILE_GANG_FQN, ZuercherConstants.JUVENILE_GANG )
                     .addProperty( EdmConstants.START_DATETIME_FQN )
-                        .value( row ->  dtHelper.parseDateTime( row.getAs( IntegrationAliases.INCIDENT_START_DATETIME_COL ) )).ok()
+                        .value( row ->  dtHelper.parseDateTime( row.getAs( ZuercherConstants.INCIDENT_START_DATE ) )).ok()
                     .addProperty( EdmConstants.REPORTED_DATETIME_FQN )
-                        .value( row -> dtHelper.parseDateTime( row.getAs( IntegrationAliases.REPORTED_DATETIME_COL ) ) ).ok()
-                    .addProperty( EdmConstants.DRUGS_PRESENT_FQN, IntegrationAliases.DRUGS_USED_COL )
-                    .addProperty( EdmConstants.ALCOHOL_CRIME_FQN, IntegrationAliases.ALCOHOL_USED_COL )
-                    .addProperty( EdmConstants.COMPUTER_CRIME_FQN, IntegrationAliases.COMPUTER_USED_COL )
+                        .value( row -> dtHelper.parseDateTime( row.getAs( ZuercherConstants.REPORTED_DATE_TIME ) ) ).ok()
+                    .addProperty( EdmConstants.DRUGS_PRESENT_FQN, ZuercherConstants.OFFENDER_USED_DRUGS )
+                    .addProperty( EdmConstants.ALCOHOL_CRIME_FQN, ZuercherConstants.OFFENDER_USED_ALCOHOL )
+                    .addProperty( EdmConstants.COMPUTER_CRIME_FQN, ZuercherConstants.OFFENDER_USED_COMPUTER )
                 .endEntity()
                 .addEntity( IntegrationAliases.CHARGE_ALIAS )
                     .to( config.getCharge() )
@@ -138,27 +138,28 @@ public class ZuercherArrest {
                         .value( ZuercherArrest::localStatute ).ok()
                     .addProperty( EdmConstants.CHARGE_DESCRIPTION_FQN)
                         .value( ZuercherArrest::offense ).ok()
-                    .addProperty( EdmConstants.NUM_OF_COUNTS_FQN, IntegrationAliases.OFFENSE_COUNT_COL )
-                    .addProperty( EdmConstants.COMMENTS_FQN, IntegrationAliases.OFFENSE_NOTES_COL )
+                    .addProperty( EdmConstants.NUM_OF_COUNTS_FQN, ZuercherConstants.OFFENSE_COUNT )
+                    .addProperty( EdmConstants.COMMENTS_FQN, ZuercherConstants.OFFENSE_DETAILS )
                 .endEntity()
                 .addEntity( IntegrationAliases.PRETRIAL_CASE_ALIAS )
                     .to( config.getPretrialCase() )
                     .updateType( UpdateType.Replace )
-                    .entityIdGenerator( row -> Parsers.getAsString( row.get(IntegrationAliases.ARREST_TRANSACTION_NO_COL ) ) )
-                    .addProperty( EdmConstants.CASE_NO_FQN).value( row -> Parsers.getAsString( row.getAs(IntegrationAliases.ARREST_TRANSACTION_NO_COL ) ) ).ok()
-                    .addProperty( EdmConstants.NAME_FQN, IntegrationAliases.CASE_NUMBER_COL )
+                    .entityIdGenerator( row -> Parsers.getAsString( row.get( ZuercherConstants.ARREST_TRANSACTION_NUMBER ) ) )
+                    .addProperty( EdmConstants.CASE_NO_FQN).value( row -> Parsers.getAsString( row.getAs( ZuercherConstants.ARREST_TRANSACTION_NUMBER) ) ).ok()
+                    .addProperty( EdmConstants.NAME_FQN, ZuercherConstants.CASE_NUMBER )
                     .addProperty( EdmConstants.ARREST_DATETIME_FQN )
-                        .value( row -> dtHelper.parseDateTime( row.getAs( IntegrationAliases.ARREST_DATETIME_COL )) ).ok()
-                    .addProperty( EdmConstants.NUM_OF_CHARGES_FQN ).value( row -> Parsers.parseInt( row.getAs( IntegrationAliases.CHARGE_COUNT_COL ) ) ).ok()
-                    .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, IntegrationAliases.ABBREVIATION_COL )
+                        .value( row -> dtHelper.parseDateTime( row.getAs( ZuercherConstants.ARREST_DATE_TIME )) ).ok()
+                    .addProperty( EdmConstants.NUM_OF_CHARGES_FQN ).value( row -> Parsers.parseInt( row.getAs( ZuercherConstants.CHARGE_COUNT ) ) ).ok()
+                    .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, ZuercherConstants.ABBREVIATION )
                 .endEntity()
                 .addEntity( IntegrationAliases.CONTACT_INFO_ALIAS )
                     .to( config.getContactInformation() )
                     .updateType( UpdateType.Replace )
                     .addProperty( EdmConstants.GENERAL_ID_FQN).value( ZuercherArrest::formatPhoneNumber ).ok()
                     .addProperty( EdmConstants.PHONE_FQN ).value( ZuercherArrest::formatPhoneNumber ).ok()
-                    .addProperty( EdmConstants.CELL_PHONE_FQN, IntegrationAliases.IS_MOBILE_COL )
-                    .addProperty( EdmConstants.PREFERRED_FQN, IntegrationAliases.IS_PREFERRED_COL )
+                    .addProperty( EdmConstants.CELL_PHONE_FQN, ZuercherConstants.IS_MOBILE )
+                    .addProperty( EdmConstants.TYPE_FQN, ZuercherConstants.CONTACT_TYPE )
+                    .addProperty( EdmConstants.PREFERRED_FQN, ZuercherConstants.IS_PREFERRED )
                 .endEntity()
 
                 .endEntities()
@@ -170,18 +171,18 @@ public class ZuercherArrest {
                     .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
                     .toEntity( IntegrationAliases.INCIDENT_ALIAS )
                     .addProperty( EdmConstants.ARREST_DATETIME_FQN )
-                        .value( row -> dtHelper.parseDateTime( row.getAs( IntegrationAliases.ARREST_DATETIME_COL )) ).ok()
-                    .addProperty( EdmConstants.PERSON_ID_FQN, IntegrationAliases.PERSON_ID_COL )
-                    .addProperty( EdmConstants.AGE_AT_EVENT_FQN, IntegrationAliases.AGE_AT_ARREST_COL )
-                    .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, IntegrationAliases.ABBREVIATION_COL )
+                        .value( row -> dtHelper.parseDateTime( row.getAs( ZuercherConstants.ARREST_DATE_TIME )) ).ok()
+                    .addProperty( EdmConstants.PERSON_ID_FQN, ZuercherConstants.PARTY_ID )
+                    .addProperty( EdmConstants.AGE_AT_EVENT_FQN, ZuercherConstants.AGE_AT_ARREST )
+                    .addProperty( EdmConstants.ARRESTING_AGENCY_FQN, ZuercherConstants.ABBREVIATION)
                 .endAssociation()
                 .addAssociation( IntegrationAliases.CHARGED_WITH_ALIAS )
                     .to( config.getChargedWith() )
                     .updateType( UpdateType.Replace )
                     .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
                     .toEntity( IntegrationAliases.CHARGE_ALIAS )
-                .entityIdGenerator( row -> Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.SSN_COL ) ) ).orElse( "" ) + Optional.ofNullable( Parsers.getAsString( row.get( IntegrationAliases.STATUTE_COL ) ) ).orElse( "" ) )
-                .addProperty( EdmConstants.STRING_ID_FQN , IntegrationAliases.PERSON_ID_COL)
+                .entityIdGenerator( row -> Optional.ofNullable( Parsers.getAsString( row.get( ZuercherConstants.SSN ) ) ).orElse( "" ) + Optional.ofNullable( Parsers.getAsString( row.get( ZuercherConstants.STATUTE ) ) ).orElse( "" ) )
+                .addProperty( EdmConstants.STRING_ID_FQN , ZuercherConstants.PARTY_ID)
                     .addProperty( EdmConstants.CHARGE_LEVEL_FQN )
                         .value( ZuercherArrest::chargeLevel ).ok()
                 .endAssociation()
@@ -191,7 +192,7 @@ public class ZuercherArrest {
                     .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
                     .toEntity( IntegrationAliases.PRETRIAL_CASE_ALIAS )
                     .addProperty( EdmConstants.STRING_ID_FQN )
-                        .value( row -> Parsers.getAsString( row.getAs( IntegrationAliases.ARREST_TRANSACTION_NO_COL )) + Parsers.getAsString( row.getAs( IntegrationAliases.PERSON_ID_COL )) ).ok()
+                        .value( row -> Parsers.getAsString( row.getAs( ZuercherConstants.ARREST_TRANSACTION_NUMBER )) + Parsers.getAsString( row.getAs( ZuercherConstants.PARTY_ID )) ).ok()
                 .endAssociation()
                 .addAssociation( IntegrationAliases.HAS_CONTACT_ALIAS )
                     .to( config.getContactInformationGiven() )
@@ -214,7 +215,7 @@ public class ZuercherArrest {
     }
 
     public static String formatPhoneNumber( Row row ) {
-        String phoneNumber = Parsers.getAsString( row.getAs( IntegrationAliases.PHONE_COL ) );
+        String phoneNumber = Parsers.getAsString( row.getAs( ZuercherConstants.PHONE ) );
         if ( StringUtils.isNotBlank( phoneNumber ) ) {
             String numbersOnly = phoneNumber.replaceAll( "[^0-9]", "" );
             if ( numbersOnly.length() == 10 ) {
@@ -233,7 +234,7 @@ public class ZuercherArrest {
     }
 
     public static List<String> getAliases( Row row ) {
-        String aliases = Parsers.getAsString( row.getAs( IntegrationAliases.ALIASES_COL ) );
+        String aliases = Parsers.getAsString( row.getAs( ZuercherConstants.ALIASES ) );
         if ( StringUtils.isNotBlank( aliases ) ) {
             return Lists.newArrayList( aliases.split( "\\|" ) );
         }
@@ -242,16 +243,16 @@ public class ZuercherArrest {
     }
 
     public static String getChargeId( Row row ) {
-        String caseNumber = Parsers.getAsString( row.getAs( IntegrationAliases.ARREST_TRANSACTION_NO_COL ) );
-        String personId = Parsers.getAsString( row.getAs( IntegrationAliases.PERSON_ID_COL ) );
-        String statuteOffense = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
-        String chargeNum = Parsers.getAsString( row.getAs( IntegrationAliases.CHARGE_NO_COL ) );
+        String caseNumber = Parsers.getAsString( row.getAs( ZuercherConstants.ARREST_TRANSACTION_NUMBER ) );
+        String personId = Parsers.getAsString( row.getAs( ZuercherConstants.PARTY_ID ) );
+        String statuteOffense = Parsers.getAsString( row.getAs( ZuercherConstants.STATUTE ) );
+        String chargeNum = Parsers.getAsString( row.getAs( ZuercherConstants.CHARGE_NUMBER ) );
 
         return caseNumber + "|" + personId + "|" + statuteOffense + "|" + chargeNum;
     }
 
     public static List standardRaceList( Row row ) {
-        String sr = row.getAs( IntegrationAliases.RACE_COL );
+        String sr = row.getAs( ZuercherConstants.RACE );
 
         if ( sr != null ) {
 
@@ -280,7 +281,7 @@ public class ZuercherArrest {
     }
 
     public static String standardEthnicity( Row row ) {
-        String eth = row.getAs( IntegrationAliases.ETHNICITY_COL );
+        String eth = row.getAs( ZuercherConstants.ETHNICITY );
 
         if ( eth != null ) {
             if ( eth.equals( "Hispanic" ) ) { return "hispanic"; }
@@ -294,7 +295,7 @@ public class ZuercherArrest {
     }
 
     public static String standardSex( Row row ) {
-        String sex = row.getAs( IntegrationAliases.SEX_COL );
+        String sex = row.getAs( ZuercherConstants.SEX );
 
         if ( sex != null ) {
             if ( sex.equals( "Male" ) ) {return "M"; }
@@ -307,7 +308,7 @@ public class ZuercherArrest {
     }
 
     public static String localStatute( Row row ) {
-        String statoff = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
+        String statoff = Parsers.getAsString( row.getAs( ZuercherConstants.STATUTE ) );
         if ( statoff != null ) {
             String[] statutesplit = statoff.split( " " );
             String statute = statutesplit[ 0 ];                //SAVE 1ST ELEMENT IN ARRAY AS A STRING
@@ -321,7 +322,7 @@ public class ZuercherArrest {
     }
 
     public static String chargeLevel( Row row ) {
-        String all = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
+        String all = Parsers.getAsString( row.getAs( ZuercherConstants.STATUTE ) );
         if ( StringUtils.isNotBlank( all ) && StringUtils.isNotBlank( all.trim() ) ) {
             all = all.trim();
             String[] splitlevel = all.split( " " );
@@ -341,7 +342,7 @@ public class ZuercherArrest {
     //split on string, get an array.
     // string 0 is statute, string 1 goes away. String length-1 is degree level, string 2-length-2 is the middle. Join on spaces (put back as string)
     public static String offense( Row row ) {
-        String offenseStr = Parsers.getAsString( row.getAs( IntegrationAliases.STATUTE_COL ) );
+        String offenseStr = Parsers.getAsString( row.getAs( ZuercherConstants.STATUTE ) );
         if ( StringUtils.isNotBlank( offenseStr ) && StringUtils.isNotBlank( offenseStr.trim() ) ) {
             offenseStr = offenseStr.trim();
 
