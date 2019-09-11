@@ -33,12 +33,13 @@ import java.util.stream.Stream;
 
 enum County {
     pennington,
-    minnehaha
+    minnehaha,
+    tto
 }
 
 public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
-    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
+    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.LOCAL;
 
     private static final DateTimeHelper     bdHelper = new DateTimeHelper( TimeZones.America_Denver,
             "MM/dd/YY" );
@@ -71,6 +72,19 @@ public class ZuercherArrest {
                     "Minnehaha County, SD_app_appearsinarrest",
                     "Minnehaha County, SD_app_livesat_arrest",
                     EdmConstants.CONTACT_INFO_GIVEN_ENTITY_SET
+            ),
+            County.tto, new IntegrationConfiguration(
+                    EdmConstants.PEOPLE_ENTITY_SET,
+                    "tto_app_incident",
+                    "tto_app_arrestcharges",
+                    "tto_app_arrestpretrialcases",
+                    "tto_app_address",
+                    EdmConstants.CONTACT_INFO_ENTITY_SET,
+                    "tto_app_arrestedin",
+                    "tto_app_arrestchargedwith",
+                    "tto_app_appearsinarrest",
+                    "tto_app_livesat_arrest",
+                    EdmConstants.CONTACT_INFO_GIVEN_ENTITY_SET
             )
     );
 
@@ -84,15 +98,17 @@ public class ZuercherArrest {
 //        final String password = args[ 1 ];
 //        final String arrestsPath = args[ 2 ];
 
-        final String arrestsPath = "/Users/toddbergman/PycharmProjects/psaparser/penningtonOldPsas.csv";
+        final String arrestsPath = "/Users/toddbergman/Desktop/arrests.csv";
 //        String jwtToken = MissionControl.getIdToken( username, password );
-        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6IktUemd5eHM2S0JjSkhCODcyZVNNZTJjcFRIemh4Uzk5IiwiaWF0IjoxNTU5MjUyNzI0LCJleHAiOjE1NTkzMzkxMjR9.W63jm4QUE7WUGyNvbONChvz3-IRMvWGttYEjJIwHJFY";
+        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6IktUemd5eHM2S0JjSkhCODcyZVNNZTJjcFRIemh4Uzk5IiwiaWF0IjoxNTY4MTY2Mjk0LCJleHAiOjE1NjgyNTI2OTR9.8wSMIve8bMVgiYvxLr0mjAAvyHXeolZ2hqrJnilPgGM";
+
 
         Payload payload = new SimplePayload( arrestsPath );
 
         //        SimplePayload payload = new SimplePayload( arrestsPath );
+
 //        final IntegrationConfiguration config = CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
-        final IntegrationConfiguration config = CONFIGURATIONS.get( County.pennington );
+        final IntegrationConfiguration config = CONFIGURATIONS.get( County.tto );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 

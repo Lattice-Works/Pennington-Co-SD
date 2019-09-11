@@ -27,7 +27,7 @@ import java.util.*;
 
 public class MinPennHearings {
     private static final Logger                      logger      = LoggerFactory.getLogger( MinPennHearings.class );
-    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
+    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.LOCAL;
 
     private static final String             dateTimePattern = "MM/dd/yyyy hh:mma";
     private static final JavaDateTimeHelper pennDTHelper    = new JavaDateTimeHelper( TimeZones.America_Denver,
@@ -45,6 +45,7 @@ public class MinPennHearings {
         SimplePayload payload = new SimplePayload( hearingsPath );
 //        String jwtToken = MissionControl.getIdToken( username, password );
         final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6Im84WTJVMnpiNUl3bzAxamR4TU4xVzJhaU44UHh3VmpoIiwiaWF0IjoxNTY3MDMwNTk3LCJleHAiOjE1NjcwNjY1OTd9.2ibMrZK2wTgaHyjlQuziZzPqc6rOHq0-Zg_hgWI8Fhc";
+
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 

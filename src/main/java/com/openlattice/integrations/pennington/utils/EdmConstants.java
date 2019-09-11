@@ -2,20 +2,20 @@ package com.openlattice.integrations.pennington.utils;
 
 public class EdmConstants {
 
-    public static final String ADDRESSES_ENTITY_SET             = "southdakotaaddresses";
-    public static final String APPEARS_IN_ENTITY_SET            = "southdakotaappearsin";
-    public static final String CHARGED_WITH_ENTITY_SET          = "southdakotachargedwith";
-    public static final String CONTACT_INFO_ENTITY_SET          = "southdakotacontactinformation";
-    public static final String CONTACT_INFO_GIVEN_ENTITY_SET    = "southdakotacontactinfogiven";
-    public static final String CASES_ENTITY_SET                 = "southdakotapretrialcaseprocessings";
-    public static final String COUNTIES_ENTITY_SET              = "southdakotacounties";
-    public static final String COURTHOUSES_ENTITY_SET           = "southdakotacourthouses";
-    public static final String COURTROOMS_ENTITY_SET            = "southdakotacourtrooms";
-    public static final String HEARING_ENTITY_SET               = "southdakotahearings";
-    public static final String JUDGE_ENTITY_SET                 = "southdakotajudges";
-    public static final String LIVES_AT_ENTITY_SET              = "southdakotalivesat";
-    public static final String OVERSEES_ENTITY_SET              = "southdakotaoversees";
-    public static final String PEOPLE_ENTITY_SET                = "southdakotapeople";
+//    public static final String ADDRESSES_ENTITY_SET             = "southdakotaaddresses";
+//    public static final String APPEARS_IN_ENTITY_SET            = "southdakotaappearsin";
+//    public static final String CHARGED_WITH_ENTITY_SET          = "southdakotachargedwith";
+//    public static final String CONTACT_INFO_ENTITY_SET          = "southdakotacontactinformation";
+//    public static final String CONTACT_INFO_GIVEN_ENTITY_SET    = "southdakotacontactinfogiven";
+//    public static final String CASES_ENTITY_SET                 = "southdakotapretrialcaseprocessings";
+//    public static final String COUNTIES_ENTITY_SET              = "southdakotacounties";
+//    public static final String COURTHOUSES_ENTITY_SET           = "southdakotacourthouses";
+//    public static final String COURTROOMS_ENTITY_SET            = "southdakotacourtrooms";
+//    public static final String HEARING_ENTITY_SET               = "southdakotahearings";
+//    public static final String JUDGE_ENTITY_SET                 = "southdakotajudges";
+//    public static final String LIVES_AT_ENTITY_SET              = "southdakotalivesat";
+//    public static final String OVERSEES_ENTITY_SET              = "southdakotaoversees";
+//    public static final String PEOPLE_ENTITY_SET                = "southdakotapeople";
 
 
     public static final String PENNINGTON_APPEARS_IN_ENTITY_SET             = "Pennington County, SD_app_appearsin";
@@ -41,6 +41,94 @@ public class EdmConstants {
     public static final String MINNEHAHA_PSA_NOTES_ENTITY_SET               = "Minnehaha County, SD_app_psanotes";
     public static final String MINNEHAHA_STAFF_ENTITY_SET                   = "Minnehaha County, SD_app_staff";
     public static final String MINNEHAHA_CALCULATED_FOR_ENTITY_SET          = "Minnehaha County, SD_app_calculatedfor";
+
+    public static final String TTO_APPEARS_IN_ENTITY_SET              = "tto_app_appearsin";
+    public static final String TTO_ASSESSED_BY_ENTITY_SET             = "tto_app_assessedby";
+    public static final String TTO_RCM_RESULTS_ENTITY_SET             = "tto_app_rcm";
+    public static final String TTO_RCM_RISK_FACTORS_ENTITY_SET        = "tto_app_rcmriskfactors";
+    public static final String TTO_PSA_ENTITY_SET                     = "tto_app_psascores";
+    public static final String TTO_PSA_RISK_FACTORS_ENTITY_SET        = "tto_app_psariskfactors";
+    public static final String TTO_MANUAL_PRETRIAL_CASES_ENTITY_SET   = "tto_app_manualpretrialcases";
+    public static final String TTO_MANUAL_CHARGES_ENTITY_SET          = "tto_app_manualcharges";
+    public static final String TTO_PSA_NOTES_ENTITY_SET               = "tto_app_psanotes";
+    public static final String TTO_STAFF_ENTITY_SET                   = "tto_app_staff";
+    public static final String TTO_CALCULATED_FOR_ENTITY_SET          = "tto_app_calculatedfor";
+
+    public static final String ADDRESSES_ENTITY_SET             = "tto_app_address";
+    public static final String APPEARS_IN_ENTITY_SET            = "tto_app_appearsin";
+    public static final String CHARGED_WITH_ENTITY_SET          = "tto_app_chargedwith";
+    public static final String CONTACT_INFO_ENTITY_SET          = "tto_app_contactinformation";
+    public static final String CONTACT_INFO_GIVEN_ENTITY_SET    = "tto_app_contactinfogiven";
+    public static final String CASES_ENTITY_SET                 = "tto_app_courtpretrialcases";
+    public static final String COUNTIES_ENTITY_SET              = "tto_app_counties";
+    public static final String COURTHOUSES_ENTITY_SET           = "tto_app_courthouses";
+    public static final String COURTROOMS_ENTITY_SET            = "tto_app_courtrooms";
+    public static final String HEARING_ENTITY_SET               = "tto_app_hearings";
+    public static final String JUDGE_ENTITY_SET                 = "tto_app_judges";
+    public static final String LIVES_AT_ENTITY_SET              = "tto_app_livesat";
+    public static final String OVERSEES_ENTITY_SET              = "tto_app_oversaw";
+    public static final String PEOPLE_ENTITY_SET                = "tto_app_people";
+
+//    tto_app_courthouses
+//    tto_app_chargedwith
+//    tto_app_psariskfactors
+//    tto_app_agencies
+//    tto_app_settings
+//    tto_app_arrestchargedwith
+//    tto_app_ftas
+//    tto_app_manualpretrialcases
+//    tto_app_assessedby
+//    tto_app_sentences
+//    tto_app_contactinfogiven
+//    tto_app_rcm
+//    tto_app_livesat_arrest
+//    tto_app_registeredfor_shared
+//    tto_app_assessedby_shared
+//    tto_app_incident
+//    tto_app_manualcourtcharges
+//    tto_app_releaseconditions
+//    tto_app_presidesover
+//    tto_app_staff
+//    tto_app_called
+//    tto_app_psaoutcomes
+//    tto_app_appearsinstate
+//    tto_app_contactinformation
+//    tto_app_address
+//    tto_app_psascores
+//    tto_app_rcmriskfactors
+//    tto_app_remindersent
+//    tto_publicsafety_arrestchargelist
+//    tto_app_courtpretrialcases
+//    tto_app_employees
+//    tto_app_appearsin
+//    tto_app_livesat
+//    tto_app_judges
+//    tto_app_psanotes
+//    tto_app_registeredfor
+//    tto_app_people
+//    tto_app_arrestpretrialcases
+//    tto_app_speakerrecognitionprofiles
+//    tto_app_manualreminders
+//    tto_app_manualbonds
+//    tto_app_arrestcharges
+//    tto_app_optout
+//    tto_app_courtcharges
+//    tto_app_subscription
+//    tto_app_editedby
+//    tto_app_courtrooms
+//    tto_app_manualpretrialcourtcases
+//    tto_app_checkin
+//    tto_app_checkinappointment
+//    tto_app_sentencedwith
+//    tto_app_arrestedin
+//    tto_app_counties
+//    tto_app_appearsinarrest
+//    tto_app_remindertemplates
+//    tto_app_manualcharges
+//    tto_app_hearings
+//    tto_app_calculatedfor
+//    tto_publicsafety_courtchargelist
+//    tto_app_oversaw
 
     public static final String ADDRESS_FQN              = "location.Address";
     public static final String AGE_AT_ARREST_FQN        = "psa.AgeAtCurrentArrest";
@@ -132,6 +220,7 @@ public class EdmConstants {
     public static final String SUFFIX_FQN               = "nc.PersonSuffix";
 
     public static final String TIMESTAMP_FQN            = "psa.GeneratedDate";
+    public static final String TYPE_FQN                  = "ol.type";
 
     public static final String UPDATE_FQN               = "ol.update";
 

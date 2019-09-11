@@ -14,7 +14,8 @@ public class IntegrationRunner {
         IntegrationType integrationType = null;
 
         try {
-            integrationType = IntegrationType.HEARINGS;
+//            integrationType = IntegrationType.valueOf( args[ 0 ] );
+            integrationType = IntegrationType.ARRESTS;
         } catch ( IllegalArgumentException e ) {
             logger.error( "A valid IntegrationType must be specified as the first argument" );
         }
@@ -28,17 +29,17 @@ public class IntegrationRunner {
 //                ManualPsaIntegration.integrate( requestArgs );
 //                break;
 
-//            case ARRESTS:
-//                ZuercherArrest.integrate( requestArgs );
-//                break;
+            case ARRESTS:
+                ZuercherArrest.integrate();
+                break;
 //
 //            case CASES:
 //                OdysseyCasesDailyDump.integrate( requestArgs );
 //                break;
 //
-            case HEARINGS:
-                MinPennHearings.integrate( );
-                break;
+//            case HEARINGS:
+//                MinPennHearings.integrate();
+//                break;
 
             default:
                 break;
