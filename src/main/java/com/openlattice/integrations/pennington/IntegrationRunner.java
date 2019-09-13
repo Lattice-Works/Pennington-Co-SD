@@ -14,8 +14,7 @@ public class IntegrationRunner {
         IntegrationType integrationType = null;
 
         try {
-//            integrationType = IntegrationType.valueOf( args[ 0 ] );
-            integrationType = IntegrationType.ARRESTS;
+            integrationType = IntegrationType.valueOf( args[ 0 ] );
         } catch ( IllegalArgumentException e ) {
             logger.error( "A valid IntegrationType must be specified as the first argument" );
         }
