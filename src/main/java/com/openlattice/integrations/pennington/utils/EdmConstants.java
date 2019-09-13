@@ -209,7 +209,10 @@ public class EdmConstants {
     public static final String STRING_ID_FQN            = "general.stringid";
     public static final String SUFFIX_FQN               = "nc.PersonSuffix";
 
+
+    public static final String TEXT_FQN                 = "ol.text" ;
     public static final String TIMESTAMP_FQN            = "psa.GeneratedDate";
+    public static final String TIME_IN_ADVANCE_FQN      = "ol.timeinadvance";
     public static final String TYPE_FQN                 = "ol.type";
 
     public static final String UPDATE_FQN               = "ol.update";
