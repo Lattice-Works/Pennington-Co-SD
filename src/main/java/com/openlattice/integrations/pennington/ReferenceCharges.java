@@ -32,7 +32,6 @@ import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
-import com.openlattice.shuttle.dates.DateTimeHelper;
 import com.openlattice.shuttle.payload.Payload;
 import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
@@ -115,7 +114,7 @@ public class ReferenceCharges {
     }
 
     public static String getValue( Row row, String header ) {
-        String val = row.getAs( header );
+        String val = Parsers.getAsString( row.getAs( header ) );
         if ( val == null )
             return null;
         return val.trim();
