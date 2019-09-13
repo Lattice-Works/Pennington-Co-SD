@@ -43,11 +43,6 @@ public class ZuercherInmates {
 
         final InmateIntegrationConfiguration config = InmateIntegrationConfigurations.CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
 
-//        final String inmatesPath = "/Users/toddbergman/Desktop/inmates.csv";
-//        String jwtToken = MissionControl.getIdToken( username, password );
-//        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZG
-//        final InmateIntegrationConfiguration config = InmateIntegrationConfigurations.CONFIGURATIONS.get( County.tto );
-
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
         Flight inmatesFlight = Flight.newFlight()
