@@ -474,26 +474,25 @@ public class ReferenceCharges {
 
     public static void main( String[] args ) throws InterruptedException {
 
-        final String lincolnArrestChargeFilePath = "/Users/toddbergman/Desktop/referenceArrestCharge.csv";
-        final String lincolnCourtChargeFilePath = "/Users/toddbergman/Desktop/referenceCourtCharge.csv";
-        final String courtChargeFilePath = "/Users/katherinebernstein/Downloads/odysseycharges.csv";
-        final String minnehahaArrestChargeFilePath = "/Users/katherinebernstein/Downloads/minnehahaarrestchargelist.csv";
-        final String penningtonArrestChargeFilePath = "/Users/katherinebernstein/Downloads/penningtonarrestchargelist.csv";
-        final String violentStep2Step4ChargeFilePath = "/Users/katherinebernstein/Downloads/dmfandviolentarrestcharges.csv";
-        final String bookingExceptionChargeFilePath = "/Users/katherinebernstein/Downloads/bookingexceptioncharges.csv";
-        final String shelbyCourtChargesFilePath = "/Users/katherinebernstein/Downloads/shelbyviolentcourtcharges.csv";
 
-        final String penningtonArrestCourtCharges20190207FilePath = "/Users/katherinebernstein/Downloads/penningtonarrestcharges20190207.csv";
-        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6Im84WTJVMnpiNUl3bzAxamR4TU4xVzJhaU44UHh3VmpoIiwiaWF0IjoxNTY1MTk1NTA5LCJleHAiOjE1NjUyMzE1MDl9.gVI3a9UaWHZG_tcCwAOcMv4wu2a0HaVra17Ak_ZLCrQ";
+        final String jwtToken = "";
 
-        final String judgesFilePath = "/Users/katherinebernstein/Downloads/MinnPennJudges.csv";
-
-        final String sdCountiesPath = "/Users/katherinebernstein/Downloads/sdcounties.csv";
-        final String sdCourthousesPath = "/Users/katherinebernstein/Downloads/sdcourthouses.csv";
-        final String sdAgenciesPath = "/Users/katherinebernstein/Downloads/sdagencies.csv";
-        final String sdCourtroomsPath = "/Users/katherinebernstein/Downloads/sdcourtrooms.csv";
-        final String sdReminderTemplates = "/Users/katherinebernstein/Downloads/sdremindertemplates.csv";
-        final String sdCourtPhones = "/Users/katherinebernstein/Downloads/sdcourtphones.csv";
+        final String lincolnArrestChargeFilePath = "";
+        final String lincolnCourtChargeFilePath = "";
+        final String courtChargeFilePath = "";
+        final String minnehahaArrestChargeFilePath = "";
+        final String penningtonArrestChargeFilePath = "";
+        final String violentStep2Step4ChargeFilePath = "";
+        final String bookingExceptionChargeFilePath = "";
+        final String shelbyCourtChargesFilePath = "";
+        final String penningtonArrestCourtCharges20190207FilePath = "";
+        final String judgesFilePath = "";
+        final String sdCountiesPath = "";
+        final String sdCourthousesPath = "";
+        final String sdAgenciesPath = "";
+        final String sdCourtroomsPath = "";
+        final String sdReminderTemplates = "";
+        final String sdCourtPhones = "";
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
