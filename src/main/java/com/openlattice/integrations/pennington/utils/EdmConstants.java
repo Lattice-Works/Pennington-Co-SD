@@ -165,6 +165,7 @@ public class EdmConstants {
     public static final String BOOKING_DATE_FQN          = "incident.startdatetime";
 
     public static final String JACKET_NO_FQN            = "justice.xref";
+    public static final String JURISDICTION_FQN         = "ol.jurisdiction";
     public static final String JUVENILE_GANG_FQN        = "ol.juvenilegang";
 
     public static final String LAST_NAME_FQN            = "nc.PersonSurName";
