@@ -105,12 +105,7 @@ public class ReferenceCharges {
     }
 
     private static boolean getBooleanValue( Object value ) {
-        String strValue = Parsers.getAsString( value );
-        if ( StringUtils.isNotBlank( strValue ) ) {
-            return strValue.trim().toLowerCase().equals( "true" );
-        }
-
-        return false;
+        return Parsers.parseBoolean( value );;
     }
 
     public static String getValue( Row row, String header ) {
