@@ -30,7 +30,7 @@ public class IntegrationRunner {
 //                break;
 
             case ARRESTS:
-                ZuercherArrest.integrate();
+                ZuercherArrest.integrate( requestArgs );
                 break;
 //
 //            case CASES:
@@ -40,7 +40,7 @@ public class IntegrationRunner {
 //            case HEARINGS:
 //                MinPennHearings.integrate();
             case INMATES:
-                ZuercherInmates.integrate();
+                ZuercherInmates.integrate( requestArgs );
                 break;
 //                break;
 
