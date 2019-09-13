@@ -3,6 +3,7 @@ package com.openlattice.integrations.pennington.utils;
 public class IntegrationAliases {
 
     public static final String ADDRESS_ALIAS                        = "address";
+    public static final String AGENCY_ALIAS                         = "agency";
     public static final String APPEARS_IN_ALIAS                     = "appearsin";
     public static final String APPEARS_IN_HEARING_ALIAS             = "appearsInHearing";
     public static final String ARRESTED_IN_ALIAS                    = "arrestedin";
@@ -15,7 +16,7 @@ public class IntegrationAliases {
     public static final String CHARGED_WITH_ALIAS                   = "chargedwith";
     public static final String CALCULATED_FOR_ALIAS                 = "calculatedFor";
     public static final String CONTACT_INFO_ALIAS                   = "contactInfo";
-    public static final String CONTACT_INFO_GIVEN_ALIAS                   = "contactInfoGivenFor";
+    public static final String CONTACT_INFO_GIVEN_ALIAS             = "contactInfoGivenFor";
     public static final String COUNTY_ALIAS                         = "county";
     public static final String COURTHOUSE_ALIAS                     = "courthouse";
     public static final String COURTROOM_ALIAS                      = "courtroom";
@@ -32,6 +33,7 @@ public class IntegrationAliases {
     public static final String MANUAL_PRETRIAL_CASE_ALIAS           = "manualPretrialCase";
     public static final String PERSON_ALIAS                         = "person";
     public static final String PSA_SCORES_ALIAS                     = "psaScores";
+    public static final String PHONE_ALIAS                          = "phone";
     public static final String PSA_RISK_FACTORS_ALIAS               = "dmfRiskFactors";
     public static final String PSA_NOTES_ALIAS                      = "dmfNotes";
     public static final String PRETRIAL_CASE_ALIAS                  = "pretrialcase";
