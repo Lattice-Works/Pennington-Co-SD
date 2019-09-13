@@ -20,7 +20,7 @@ public class IntegrationRunner {
             logger.error( "A valid IntegrationType must be specified as the first argument" );
         }
 
-//        String[] requestArgs = Arrays.copyOfRange( args, 1, args.length );
+        String[] requestArgs = Arrays.copyOfRange( args, 1, args.length );
 
         switch ( integrationType ) {
 
