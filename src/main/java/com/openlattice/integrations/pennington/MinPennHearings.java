@@ -41,7 +41,7 @@ public class MinPennHearings {
 
         final String username = args[ 0 ];
         final String password = args[ 1 ];
-        final String hearingsPath = args[ 2 ];;
+        final String hearingsPath = args[ 2 ];
         SimplePayload payload = new SimplePayload( hearingsPath );
         String jwtToken = MissionControl.getIdToken( username, password );
 
