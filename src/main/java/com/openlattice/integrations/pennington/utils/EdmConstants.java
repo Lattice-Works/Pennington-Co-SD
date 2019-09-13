@@ -132,6 +132,7 @@ public class EdmConstants {
     public static final String SUFFIX_FQN               = "nc.PersonSuffix";
 
     public static final String TIMESTAMP_FQN            = "psa.GeneratedDate";
+    public static final String TYPE_FQN                 = "ol.type";
 
     public static final String UPDATE_FQN               = "ol.update";
 
