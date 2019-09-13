@@ -39,6 +39,9 @@ public class IntegrationRunner {
 //
 //            case HEARINGS:
 //                MinPennHearings.integrate();
+            case INMATES:
+                ZuercherInmates.integrate();
+                break;
 //                break;
 
             default:
