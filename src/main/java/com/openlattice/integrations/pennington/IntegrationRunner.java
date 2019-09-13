@@ -25,21 +25,21 @@ public class IntegrationRunner {
         switch ( integrationType ) {
 
 
-//            case PSAS:
-//                ManualPsaIntegration.integrate( requestArgs );
-//                break;
+            case PSAS:
+                ManualPsaIntegration.integrate( requestArgs );
+                break;
 
             case ARRESTS:
                 ZuercherArrest.integrate( requestArgs );
                 break;
-//
-//            case CASES:
-//                OdysseyCasesDailyDump.integrate( requestArgs );
-//                break;
-//
-//            case HEARINGS:
-//                MinPennHearings.integrate();
-//                break;
+
+            case CASES:
+                OdysseyCasesDailyDump.integrate( requestArgs );
+                break;
+
+            case HEARINGS:
+                MinPennHearings.integrate( requestArgs );
+                break;
 
             case INMATES:
                 ZuercherInmates.integrate( requestArgs );
