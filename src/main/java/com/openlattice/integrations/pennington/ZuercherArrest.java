@@ -41,22 +41,13 @@ public class ZuercherArrest {
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
     // with anything (even nothing) in between them
 
-    public static void integrate() throws InterruptedException, IOException {
+    public static void integrate( String[] args ) throws InterruptedException, IOException {
 
-//        final String username = args[ 0 ];
-//        final String password = args[ 1 ];
-//        final String arrestsPath = args[ 2 ];
-
-        final String arrestsPath = "/Users/toddbergman/Desktop/arrests.csv";
-//        String jwtToken = MissionControl.getIdToken( username, password );
-        final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvZGRAb3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdfSwibmlja25hbWUiOiJ0b2RkIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTA0MDg4MTk5MDIxNTM0MzY1NzUiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMDQwODgxOTkwMjE1MzQzNjU3NSIsImF1ZCI6IktUemd5eHM2S0JjSkhCODcyZVNNZTJjcFRIemh4Uzk5IiwiaWF0IjoxNTY4MTY2Mjk0LCJleHAiOjE1NjgyNTI2OTR9.8wSMIve8bMVgiYvxLr0mjAAvyHXeolZ2hqrJnilPgGM";
-
-
-        Payload payload = new SimplePayload( arrestsPath );
-
-        //        SimplePayload payload = new SimplePayload( arrestsPath );
-
-//        final IntegrationConfiguration config = CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
+        final String username = args[ 0 ];
+        final String password = args[ 1 ];
+        final String arrestsPath = args[ 2 ];
+        String jwtToken = MissionControl.getIdToken( username, password );
+        SimplePayload payload = new SimplePayload( arrestsPath );
         final ArrestIntegrationConfiguration config = ArrestIntegrationConfigurations.CONFIGURATIONS.get( args[ 3 ] );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
