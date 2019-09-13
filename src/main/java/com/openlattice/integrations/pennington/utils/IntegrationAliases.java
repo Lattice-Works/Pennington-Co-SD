@@ -15,6 +15,7 @@ public class IntegrationAliases {
     public static final String CHARGED_WITH_ALIAS                   = "chargedwith";
     public static final String CALCULATED_FOR_ALIAS                 = "calculatedFor";
     public static final String CONTACT_INFO_ALIAS                   = "contactInfo";
+    public static final String CONTACT_INFO_GIVEN_ALIAS                   = "contactInfoGivenFor";
     public static final String COUNTY_ALIAS                         = "county";
     public static final String COURTHOUSE_ALIAS                     = "courthouse";
     public static final String COURTROOM_ALIAS                      = "courtroom";
