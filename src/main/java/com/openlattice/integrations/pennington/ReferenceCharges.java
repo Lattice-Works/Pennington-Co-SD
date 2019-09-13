@@ -25,6 +25,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.client.RetrofitFactory.Environment;
+import com.openlattice.integrations.pennington.utils.ChargeConstants;
+import com.openlattice.integrations.pennington.utils.EdmConstants;
+import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.Shuttle;
@@ -34,6 +37,7 @@ import com.openlattice.shuttle.payload.Payload;
 import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +54,7 @@ public class ReferenceCharges {
 
     public static final RetrofitFactory.Environment environment = Environment.PROD_INTEGRATION;
 
-    private static final String STATUTE_FQN     = "ol.id";
+    private static final String STATUTE_FQN     = EdmConstants.OL_ID_FQN;
     private static final String DESCRIPTION_FQN = "ol.name";
 
     private static final String DEGREE_FQN       = "ol.level";
@@ -85,8 +89,8 @@ public class ReferenceCharges {
     private static final String CONTACT_INFO_GIVEN = "southdakotacontactinfogiven";
 
     private static String getChargeId( Map<String, Object> row ) {
-        String statute = Parsers.getAsString( row.get( "statute" ) );
-        String description = Parsers.getAsString( row.get( "description" ) );
+        String statute = Parsers.getAsString( row.get( ChargeConstants.STATUTE ) );
+        String description = Parsers.getAsString( row.get( ChargeConstants.DESCRIPTION ) );
         if ( statute == null ) {
             statute = "";
         }
@@ -98,7 +102,7 @@ public class ReferenceCharges {
     }
 
     private static boolean getIsViolent( Row row ) {
-        return row.getAs( "violent" ).equals( "True" );
+        return Parsers.parseBoolean( row.getAs("voilent") );
     }
 
     private static boolean getBooleanValue( Object value ) {
@@ -120,10 +124,10 @@ public class ReferenceCharges {
     public static Flight getSDCounties() {
         return Flight.newFlight()
                 .createEntities()
-                .addEntity( "county" )
+            .addEntity( IntegrationAliases.COUNTY_ALIAS )
                 .to( COUNTIES )
-                .addProperty( "general.id", "id" )
-                .addProperty( "ol.name", "county" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, ChargeConstants.ID )
+                .addProperty( EdmConstants.NAME_FQN, "county" )
                 .endEntity()
                 .endEntities()
                 .done();
@@ -132,23 +136,23 @@ public class ReferenceCharges {
     public static Flight getSDCourthouses() {
         return Flight.newFlight()
                 .createEntities()
-                .addEntity( "county" )
+                .addEntity( IntegrationAliases.COUNTY_ALIAS )
                 .to( COUNTIES )
-                .addProperty( "general.id", "id" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, ChargeConstants.ID )
                 .endEntity()
-                .addEntity( "courthouse" )
+                .addEntity( IntegrationAliases.COURTHOUSE_ALIAS )
                 .to( COURTHOUSES )
-                .addProperty( "general.id", "id" )
-                .addProperty( "ol.name", "name" )
-                .addProperty( "location.address", "address" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, ChargeConstants.ID )
+                .addProperty( EdmConstants.NAME_FQN, ChargeConstants.NAME)
+                .addProperty( EdmConstants.ADDRESS_FQN, ChargeConstants.ADDRESS )
                 .endEntity()
                 .endEntities()
                 .createAssociations()
-                .addAssociation( "appearsin" )
+                .addAssociation( IntegrationAliases.APPEARS_IN_ALIAS )
                 .to( SD_APPEARS_IN )
-                .fromEntity( "courthouse" )
-                .toEntity( "county" )
-                .addProperty( "general.stringid", "id" )
+                .fromEntity( ChargeConstants.COURTHOUSE_ALIAS )
+                .toEntity( ChargeConstants.COUNTY_ALIAS )
+                .addProperty( EdmConstants.STRING_ID_FQN, ChargeConstants.ID )
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -157,24 +161,24 @@ public class ReferenceCharges {
     public static Flight getSDCourtPhones() {
         return Flight.newFlight()
                 .createEntities()
-                .addEntity( "courthouse" )
+                .addEntity( IntegrationAliases.COURTHOUSE_ALIAS )
                 .to( COURTHOUSES )
-                .addProperty( "general.id", "id" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, ChargeConstants.ID )
                 .endEntity()
                 .addEntity( "phone" )
                 .to( CONTACT_INFO )
-                .addProperty( "general.id", "phone" )
-                .addProperty( "contact.phonenumber", "phone" )
-                .addProperty( "ol.preferred", "preferred" )
-                .addProperty( "contact.cellphone" ).value( row -> false ).ok()
+                .addProperty( EdmConstants.GENERAL_ID_FQN, "phone" )
+                .addProperty( EdmConstants.PHONE_FQN, "phone" )
+                .addProperty( EdmConstants.PREFERRED_FQN, "preferred" )
+                .addProperty( EdmConstants.CELL_PHONE_FQN ).value( row -> false ).ok()
                 .endEntity()
                 .endEntities()
                 .createAssociations()
-                .addAssociation( "contactinfogiven" )
+                .addAssociation( IntegrationAliases.CONTACT_INFO_GIVEN_ALIAS )
                 .to( CONTACT_INFO_GIVEN )
                 .fromEntity( "phone" )
-                .toEntity( "courthouse" )
-                .addProperty( "ol.id", "phone" )
+                .toEntity( IntegrationAliases.COURTHOUSE_ALIAS )
+                .addProperty( EdmConstants.OL_ID_FQN, "phone" )
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -183,22 +187,22 @@ public class ReferenceCharges {
     public static Flight getSDCourtrooms() {
         return Flight.newFlight()
                 .createEntities()
-                .addEntity( "courtroom" )
+                .addEntity( IntegrationAliases.COURTROOM_ALIAS )
                 .to( COURTROOMS )
-                .addProperty( "ol.id" ).value( row -> row.getAs( "id" ) + "|" + row.getAs( "room" ) ).ok()
+                .addProperty( EdmConstants.OL_ID_FQN ).value( row -> row.getAs( ChargeConstants.ID ) + "|" + row.getAs( "room" ) ).ok()
                 .addProperty( "ol.roomnumber", "room" )
                 .endEntity()
-                .addEntity( "courthouse" )
+                .addEntity( IntegrationAliases.COURTHOUSE_ALIAS )
                 .to( COURTHOUSES )
-                .addProperty( "general.id", "id" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, ChargeConstants.ID )
                 .endEntity()
                 .endEntities()
                 .createAssociations()
                 .addAssociation( "appearsin" )
                 .to( SD_APPEARS_IN )
-                .fromEntity( "courtroom" )
-                .toEntity( "courthouse" )
-                .addProperty( "general.stringid" ).value( row -> row.getAs( "id" ) + "|" + row.getAs( "room" ) ).ok()
+                .fromEntity( IntegrationAliases.COURTROOM_ALIAS )
+                .toEntity( IntegrationAliases.COURTHOUSE_ALIAS )
+                .addProperty( EdmConstants.STRING_ID_FQN ).value( row -> row.getAs( ChargeConstants.ID ) + "|" + row.getAs( "room" ) ).ok()
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -209,11 +213,11 @@ public class ReferenceCharges {
                 .createEntities()
                 .addEntity( "county" )
                 .to( COUNTIES )
-                .addProperty( "general.id", "id" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, ChargeConstants.ID )
                 .endEntity()
                 .addEntity( "agency" )
                 .to( AGENCIES )
-                .addProperty( "ol.id", "abbrev" )
+                .addProperty( EdmConstants.OL_ID_FQN, "abbrev" )
                 .addProperty( "ol.name", "name" )
                 .endEntity()
                 .endEntities()
@@ -222,7 +226,7 @@ public class ReferenceCharges {
                 .to( SD_APPEARS_IN )
                 .fromEntity( "agency" )
                 .toEntity( "county" )
-                .addProperty( "general.stringid", "id" )
+                .addProperty( EdmConstants.STRING_ID_FQN, ChargeConstants.ID )
                 .endAssociation()
                 .endAssociations()
                 .done();
@@ -235,16 +239,16 @@ public class ReferenceCharges {
                 .addEntity( "minnehahaCourtCharge" )
                 .to( MINN_COURT_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN ).value( row -> getValue( row, "statute" ) ).ok()
-                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, "description" ) ).ok()
+                .addProperty( STATUTE_FQN ).value( row -> getValue( row, ChargeConstants.STATUTE ) ).ok()
+                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, ChargeConstants.DESCRIPTION ) ).ok()
                 .addProperty( VIOLENT_FQN ).value( ReferenceCharges::getIsViolent ).ok()
                 .endEntity()
 
                 .addEntity( "penningtonCourtCharge" )
                 .to( PENN_COURT_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN ).value( row -> getValue( row, "statute" ) ).ok()
-                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, "description" ) ).ok()
+                .addProperty( STATUTE_FQN ).value( row -> getValue( row, ChargeConstants.STATUTE ) ).ok()
+                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, ChargeConstants.DESCRIPTION ) ).ok()
                 .addProperty( VIOLENT_FQN ).value( ReferenceCharges::getIsViolent ).ok()
                 .endEntity()
 
@@ -259,15 +263,15 @@ public class ReferenceCharges {
                 .addEntity( "arrestCharge" )
                 .to( entitySetName )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN, "statute" )
-                .addProperty( DESCRIPTION_FQN, "description" )
-                .addProperty( DEGREE_FQN, "degree" )
-                .addProperty( DEGREE_SHORT_FQN, "degreeShort" )
-                .addProperty( DMF_STEP_2_FQN ).value( row -> getBooleanValue( row.getAs( "STEP_TWO" ) ) ).ok()
+                .addProperty( STATUTE_FQN, ChargeConstants.STATUTE )
+                .addProperty( DESCRIPTION_FQN, ChargeConstants.DESCRIPTION )
+                .addProperty( DEGREE_FQN, ChargeConstants.DEGREE )
+                .addProperty( DEGREE_SHORT_FQN, ChargeConstants.DEGREE_SHORT )
+                .addProperty( DMF_STEP_2_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.STEP_2 ) ) ).ok()
                 .addProperty( DMF_STEP_4_FQN ).value( row -> getBooleanValue( row.getAs( "STEP_FOUR" ) ) ).ok()
-                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( "ALL_VIOLENT" ) ) ).ok()
-                .addProperty( BHE_FQN ).value( row -> getBooleanValue( row.getAs( "BHE Charges" ) ) ).ok()
-                .addProperty( BRE_FQN ).value( row -> getBooleanValue( row.getAs( "BRE Charges" ) ) ).ok()
+                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.IS_VIOLENT ) ) ).ok()
+                .addProperty( BHE_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.BHE ) ) ).ok()
+                .addProperty( BRE_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.BRE ) ) ).ok()
                 .endEntity()
 
                 .endEntities()
@@ -281,15 +285,15 @@ public class ReferenceCharges {
                 .addEntity( "arrestCharge" )
                 .to( PENN_ARREST_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN, "statute" )
-                .addProperty( DESCRIPTION_FQN, "description" )
-                .addProperty( DEGREE_FQN, "degree" )
-                .addProperty( DEGREE_SHORT_FQN, "degreeShort" )
-                .addProperty( DMF_STEP_2_FQN ).value( row -> getBooleanValue( row.getAs( "STEP_TWO" ) ) ).ok()
-                .addProperty( DMF_STEP_4_FQN ).value( row -> getBooleanValue( row.getAs( "STEP_FOUR" ) ) ).ok()
-                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( "ALL_VIOLENT" ) ) ).ok()
-                .addProperty( BHE_FQN ).value( row -> getBooleanValue( row.getAs( "BHE Charges" ) ) ).ok()
-                .addProperty( BRE_FQN ).value( row -> getBooleanValue( row.getAs( "BRE Charges" ) ) ).ok()
+                .addProperty( STATUTE_FQN, ChargeConstants.STATUTE )
+                .addProperty( DESCRIPTION_FQN, ChargeConstants.DESCRIPTION )
+                .addProperty( DEGREE_FQN, ChargeConstants.DEGREE )
+                .addProperty( DEGREE_SHORT_FQN, ChargeConstants.DEGREE_SHORT )
+                .addProperty( DMF_STEP_2_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.STEP_2 ) ) ).ok()
+                .addProperty( DMF_STEP_4_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.STEP_4  ) ) ).ok()
+                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.IS_VIOLENT ) ) ).ok()
+                .addProperty( BHE_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.BHE ) ) ).ok()
+                .addProperty( BRE_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.BRE ) ) ).ok()
                 .endEntity()
 
                 .endEntities()
@@ -303,15 +307,15 @@ public class ReferenceCharges {
                 .addEntity( "arrestCharge" )
                 .to( PTCM_ARREST_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN, "statute" )
-                .addProperty( DESCRIPTION_FQN, "description" )
-                .addProperty( DEGREE_FQN, "degree" )
-                .addProperty( DEGREE_SHORT_FQN, "degreeShort" )
-                .addProperty( DMF_STEP_2_FQN ).value( row -> getBooleanValue( row.getAs( "STEP_TWO" ) ) ).ok()
-                .addProperty( DMF_STEP_4_FQN ).value( row -> getBooleanValue( row.getAs( "STEP_FOUR" ) ) ).ok()
-                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( "ALL_VIOLENT" ) ) ).ok()
-                .addProperty( BHE_FQN ).value( row -> getBooleanValue( row.getAs( "BHE Charges" ) ) ).ok()
-                .addProperty( BRE_FQN ).value( row -> getBooleanValue( row.getAs( "BRE Charges" ) ) ).ok()
+                .addProperty( STATUTE_FQN, ChargeConstants.STATUTE )
+                .addProperty( DESCRIPTION_FQN, ChargeConstants.DESCRIPTION )
+                .addProperty( DEGREE_FQN, ChargeConstants.DEGREE )
+                .addProperty( DEGREE_SHORT_FQN, ChargeConstants.DEGREE_SHORT )
+                .addProperty( DMF_STEP_2_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.STEP_2 ) ) ).ok()
+                .addProperty( DMF_STEP_4_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.STEP_4 ) ) ).ok()
+                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.IS_VIOLENT ) ) ).ok()
+                .addProperty( BHE_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.BHE ) ) ).ok()
+                .addProperty( BRE_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.BRE ) ) ).ok()
                 .endEntity()
 
                 .endEntities()
@@ -325,8 +329,8 @@ public class ReferenceCharges {
                 .addEntity( "courtCharge" )
                 .to( PTCM_COURT_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN ).value( row -> getValue( row, "statute" ) ).ok()
-                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, "description" ) ).ok()
+                .addProperty( STATUTE_FQN ).value( row -> getValue( row, ChargeConstants.STATUTE ) ).ok()
+                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, ChargeConstants.DESCRIPTION ) ).ok()
                 .addProperty( VIOLENT_FQN ).value( ReferenceCharges::getIsViolent ).ok()
                 .endEntity()
 
@@ -341,9 +345,9 @@ public class ReferenceCharges {
                 .addEntity( "courtCharge" )
                 .to( LINCOLN_COURT_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN ).value( row -> getValue( row, "statute" ) ).ok()
-                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, "description" ) ).ok()
-                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( "ALL_VIOLENT" ) ) ).ok()
+                .addProperty( STATUTE_FQN ).value( row -> getValue( row, ChargeConstants.STATUTE ) ).ok()
+                .addProperty( DESCRIPTION_FQN ).value( row -> getValue( row, ChargeConstants.DESCRIPTION ) ).ok()
+                .addProperty( VIOLENT_FQN ).value( row -> getBooleanValue( row.getAs( ChargeConstants.IS_VIOLENT ) ) ).ok()
                 .endEntity()
 
                 .endEntities()
@@ -357,21 +361,21 @@ public class ReferenceCharges {
                 .addEntity( "minnCharge" )
                 .to( MINN_ARREST_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN, "statute" )
-                .addProperty( DESCRIPTION_FQN, "description" )
-                .addProperty( VIOLENT_FQN, "violent" )
-                .addProperty( DMF_STEP_2_FQN, "step2" )
-                .addProperty( DMF_STEP_4_FQN, "step4" )
+                .addProperty( STATUTE_FQN, ChargeConstants.STATUTE )
+                .addProperty( DESCRIPTION_FQN, ChargeConstants.DESCRIPTION )
+                .addProperty( VIOLENT_FQN, ChargeConstants.IS_VIOLENT )
+                .addProperty( DMF_STEP_2_FQN, ChargeConstants.STEP_2 )
+                .addProperty( DMF_STEP_4_FQN, ChargeConstants.STEP_4 )
                 .endEntity()
 
                 .addEntity( "pennCharge" )
                 .to( PENN_ARREST_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN, "statute" )
-                .addProperty( DESCRIPTION_FQN, "description" )
-                .addProperty( VIOLENT_FQN, "violent" )
-                .addProperty( DMF_STEP_2_FQN, "step2" )
-                .addProperty( DMF_STEP_4_FQN, "step4" )
+                .addProperty( STATUTE_FQN, ChargeConstants.STATUTE )
+                .addProperty( DESCRIPTION_FQN, ChargeConstants.DESCRIPTION )
+                .addProperty( VIOLENT_FQN, ChargeConstants.IS_VIOLENT )
+                .addProperty( DMF_STEP_2_FQN, ChargeConstants.STEP_2 )
+                .addProperty( DMF_STEP_4_FQN, ChargeConstants.STEP_4 )
                 .endEntity()
 
                 .endEntities()
@@ -385,8 +389,8 @@ public class ReferenceCharges {
                 .addEntity( "bookingCharge" )
                 .to( PENN_ARREST_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN, "statute" )
-                .addProperty( DESCRIPTION_FQN, "description" )
+                .addProperty( STATUTE_FQN, ChargeConstants.STATUTE )
+                .addProperty( DESCRIPTION_FQN, ChargeConstants.DESCRIPTION )
                 .addProperty( BHE_FQN, "bhe" )
                 .addProperty( BRE_FQN, "bre" )
                 .endEntity()
@@ -401,7 +405,7 @@ public class ReferenceCharges {
 
                 .addEntity( "bookingCharge" )
                 .to( "testclear" )
-                .addProperty( "nc.SubjectIdentification", "a" )
+                .addProperty( EdmConstants.PERSON_ID_FQN, "a" )
                 .endEntity()
 
                 .endEntities()
@@ -416,8 +420,8 @@ public class ReferenceCharges {
                 .addEntity( "charge" )
                 .to( SHELBY_COURT_CHARGES )
                 .entityIdGenerator( ReferenceCharges::getChargeId )
-                .addProperty( STATUTE_FQN ).value( row -> Parsers.getAsString( row.getAs( "statute" ) ) ).ok()
-                .addProperty( DESCRIPTION_FQN ).value( row -> Parsers.getAsString( row.getAs( "description" ) ) ).ok()
+                .addProperty( STATUTE_FQN ).value( row -> Parsers.getAsString( row.getAs( ChargeConstants.STATUTE ) ) ).ok()
+                .addProperty( DESCRIPTION_FQN ).value( row -> Parsers.getAsString( row.getAs( ChargeConstants.DESCRIPTION ) ) ).ok()
                 .addProperty( VIOLENT_FQN )
                 .value( row -> row.getAs( "isViolent" ).toString().toLowerCase().contains( "yes" ) ).ok()
                 .addProperty( DEGREE_FQN, "Description" )
@@ -435,10 +439,10 @@ public class ReferenceCharges {
                 .createEntities()
                 .addEntity( "judge" )
                 .to( "southdakotajudges" )
-                .addProperty( "nc.SubjectIdentification", "id" )
-                .addProperty( "nc.PersonGivenName", "firstName" )
-                .addProperty( "nc.PersonSurName", "lastName" )
-                .addProperty( "nc.PersonMiddleName", "middleName" )
+                .addProperty( EdmConstants.PERSON_ID_FQN, ChargeConstants.ID )
+                .addProperty( EdmConstants.FIRST_NAME_FQN, "firstName" )
+                .addProperty( EdmConstants.LAST_NAME_FQN, "lastName" )
+                .addProperty( EdmConstants.MIDDLE_NAME_FQN, "middleName" )
                 .addProperty( "ol.idjurisdiction", "county" )
                 .endEntity()
                 .endEntities()
@@ -451,14 +455,14 @@ public class ReferenceCharges {
                 .createEntities()
                 .addEntity( "remindertemplate" )
                 .to( REMINDER_TEMPLATES )
-                .addProperty( "ol.id", "id" )
+                .addProperty( EdmConstants.OL_ID_FQN, ChargeConstants.ID )
                 .addProperty( "ol.text", "text" )
                 .addProperty( "ol.type", "type" )
                 .addProperty( "ol.timeinadvance", "duration" )
                 .endEntity()
                 .addEntity( "county" )
                 .to( COUNTIES )
-                .addProperty( "general.id", "countyid" )
+                .addProperty( EdmConstants.GENERAL_ID_FQN, "countyid" )
                 .endEntity()
                 .endEntities()
                 .createAssociations()
@@ -466,7 +470,7 @@ public class ReferenceCharges {
                 .to( SD_APPEARS_IN )
                 .fromEntity( "remindertemplate" )
                 .toEntity( "county" )
-                .addProperty( "general.stringid", "id" )
+                .addProperty( EdmConstants.STRING_ID_FQN, ChargeConstants.ID )
                 .endAssociation()
                 .endAssociations()
                 .done();
