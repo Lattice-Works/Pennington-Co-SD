@@ -114,10 +114,7 @@ public class ReferenceCharges {
     }
 
     public static String getValue( Row row, String header ) {
-        String val = Parsers.getAsString( row.getAs( header ) );
-        if ( val == null )
-            return null;
-        return val.trim();
+        return Parsers.getAsString( row.getAs( header ) );
     }
 
     public static Flight getSDCounties() {
