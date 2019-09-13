@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class ZuercherInmates {
     private static final Logger logger      = LoggerFactory.getLogger( ZuercherArrest.class );
-    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.LOCAL;
+    private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     private static final String dateTimePattern = "MM/dd/yy HH:mm";
     private static final JavaDateTimeHelper pennDTHelper    = new JavaDateTimeHelper( TimeZones.America_Denver, dateTimePattern );
