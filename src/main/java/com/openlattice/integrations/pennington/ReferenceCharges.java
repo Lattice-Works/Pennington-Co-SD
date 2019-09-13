@@ -101,7 +101,7 @@ public class ReferenceCharges {
     }
 
     private static boolean getIsViolent( Row row ) {
-        return Parsers.parseBoolean( row.getAs("voilent") );
+        return Parsers.parseBoolean( row.getAs(ChargeConstants.IS_VIOLENT) );
     }
 
     private static boolean getBooleanValue( Object value ) {
