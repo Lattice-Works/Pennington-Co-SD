@@ -25,7 +25,7 @@ public class OdysseyCasesDailyDump {
 
     protected static final Logger logger = LoggerFactory.getLogger( OdysseyCasesDailyDump.class );
 
-    public static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.LOCAL;
+    public static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     private static final DateTimeHelper bdHelper = new DateTimeHelper( DateTimeZone.forOffsetHours( -6 ),
             "yyyy-MM-dd HH:mm:ss" );
