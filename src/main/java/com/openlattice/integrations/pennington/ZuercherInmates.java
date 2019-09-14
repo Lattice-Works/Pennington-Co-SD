@@ -23,13 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ZuercherInmates {
-    private static final Logger logger      = LoggerFactory.getLogger( ZuercherArrest.class );
+    private static final Logger logger      = LoggerFactory.getLogger( ZuercherInmates.class );
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
-    private static final String dateTimePattern = "MM/dd/yy HH:mm";
-    private static final JavaDateTimeHelper pennDTHelper    = new JavaDateTimeHelper( TimeZones.America_Denver, dateTimePattern );
-    private static final JavaDateTimeHelper minnDTHelper    = new JavaDateTimeHelper( TimeZones.America_Chicago, dateTimePattern );
-    private static final JavaDateTimeHelper bdHelper        = new JavaDateTimeHelper( TimeZones.America_Denver,"MM/dd/yy" );
+    public static County county;
+    private static final String dateTimePattern         = "MM/dd/yy HH:mm";
+    private static final JavaDateTimeHelper bdHelper    = new JavaDateTimeHelper( TimeZones.America_Denver,"MM/dd/yy" );
 
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
