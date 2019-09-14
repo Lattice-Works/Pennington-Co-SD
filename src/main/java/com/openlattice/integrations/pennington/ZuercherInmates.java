@@ -67,7 +67,7 @@ public class ZuercherInmates {
                 .addEntity( IntegrationAliases.JAIL_STAY_ALIAS )
                 .to( config.getJailStays() )
                 .updateType( UpdateType.Replace )
-                .entityIdGenerator( ZuercherInmates::getInmateID )
+                .entityIdGenerator( IntegrationUtils::getInmateID )
                 .addProperty( EdmConstants.OL_ID_FQN, ZuercherConstants.INMATE_NUMBER )
                 .addProperty( EdmConstants.BOOKING_DATE_FQN )
                 .value( ZuercherInmates::getBookingDateTime ).ok()
@@ -84,15 +84,15 @@ public class ZuercherInmates {
                 .addProperty( EdmConstants.BOND_SOURCE).value( row -> row.getAs( ZuercherConstants.BOND_SOURCE ) ).ok()
                 .endEntity()
                 .endEntities()
-                .createAssociations()
 
+                .createAssociations()
                 .addAssociation( IntegrationAliases.SUBJECT_OF_ALIAS )
                 .to( config.getSubjectOf() )
                 .updateType( UpdateType.Replace )
                 .fromEntity( IntegrationAliases.ARRESTEE_ALIAS )
                 .toEntity( IntegrationAliases.JAIL_STAY_ALIAS )
                 .addProperty( EdmConstants.COMPLETED_DATETIME_FQN ).value( ZuercherInmates::getBookingDateTime ).ok()
-                .addProperty( EdmConstants.OL_ID_FQN ).value( ZuercherInmates::getInmateID ).ok()
+                .addProperty( EdmConstants.OL_ID_FQN ).value( IntegrationUtils::getInmateID ).ok()
                 .endAssociation()
                 .addAssociation( IntegrationAliases.REGISTERED_FOR_ALIAS )
                 .to( config.getRegisteredfor() )
@@ -101,7 +101,7 @@ public class ZuercherInmates {
                 .toEntity( IntegrationAliases.BOND_ALIAS )
                 .entityIdGenerator( ZuercherInmates::getBondId )
                 .addProperty( EdmConstants.COMPLETED_DATETIME_FQN ).value( ZuercherInmates::getBookingDateTime ).ok()
-                .addProperty( EdmConstants.OL_ID_FQN ).value( ZuercherInmates::getInmateID ).ok()
+                .addProperty( EdmConstants.OL_ID_FQN ).value( IntegrationUtils::getInmateID ).ok()
                 .endAssociation()
                 .addAssociation( IntegrationAliases.BOND_SET_ALIAS )
                 .to( config.getBondSet() )
@@ -124,48 +124,23 @@ public class ZuercherInmates {
         MissionControl.succeed();
     }
 
-    public static String getInmateID( Map<String, Object> row ) {
-        String inmateId = Parsers.getAsString( row.get( ZuercherConstants.INMATE_NUMBER ) );
-        String partyId = Parsers.getAsString( row.get( ZuercherConstants.PARTY_ID ) );
-        String bookingDate = getBookingDateTime( row );
-        String finalInmateId = inmateId + "|" + partyId + "|" + bookingDate;
-        if ( StringUtils.isNotBlank( finalInmateId ) && StringUtils.isNotBlank( finalInmateId.trim() ) ) {
-            return finalInmateId;
-        }
-        return null;
-    }
-
     public static String getBondId( Map<String, Object> row ) {
-        String baseId = getInmateID( row );
+        String baseId = IntegrationUtils.getInmateID( row );
         String bondDescription = Parsers.getAsString( row.getOrDefault( ZuercherConstants.BOND_TYPE, "NoBondType" ) );
-        String bondAmount = Parsers.getAsString( row.getOrDefault( ZuercherConstants.BOND_AMOUNT, "NoBondAmount") );
         String bondNumber = Parsers.getAsString( row.get( ZuercherConstants.BOND_NUM ) );
-        String finalId = baseId + "|" + bondDescription + "|" + bondAmount + "|" + bondNumber;
+        String finalId = baseId + "|" + bondDescription + "|" + bondNumber;
         if ( StringUtils.isNotBlank( finalId ) && StringUtils.isNotBlank( finalId.trim() ) ) {
             return finalId;
         }
         return null;
     }
 
-    public static String getInmateID( Row row ) {
-        String inmateId = Parsers.getAsString( row.getAs( ZuercherConstants.INMATE_NUMBER ) );
-        String partyId = Parsers.getAsString( row.getAs( ZuercherConstants.PARTY_ID ) );
-        String bookingDate = getBookingDateTime( row );
-        String finalInmateId = inmateId + "|" + partyId + "|" + bookingDate;
-        if ( StringUtils.isNotBlank( finalInmateId ) && StringUtils.isNotBlank( finalInmateId.trim() ) ) {
-            return finalInmateId;
-        }
-        return null;
-    }
-
     public static String getBondId( Row row ) {
-        String baseId = getInmateID( row );
+        String baseId = IntegrationUtils.getInmateID( row );
         String bondDescription = Parsers.getAsString( row.getAs( ZuercherConstants.BOND_TYPE ) );
         if ( StringUtils.isBlank( bondDescription ) || bondDescription == null ) bondDescription = "NoBondType";
-        String bondAmount = Parsers.getAsString( row.getAs( ZuercherConstants.BOND_AMOUNT) );
         String bondNumber = Parsers.getAsString( row.getAs( ZuercherConstants.BOND_NUM) );
-        if ( StringUtils.isBlank( bondAmount ) || bondAmount == null ) bondAmount = "NoBondAmount";
-        String finalId = baseId + "|" + bondDescription + "|" + bondAmount + "|" + bondNumber;
+        String finalId = baseId + "|" + bondDescription + "|" + bondNumber;
         if ( StringUtils.isNotBlank( finalId ) && StringUtils.isNotBlank( finalId.trim() ) ) {
             return finalId;
         }
@@ -192,25 +167,8 @@ public class ZuercherInmates {
         return null;
     }
 
-    private static String getCounty( Row row ) {
-        String county = Parsers.getAsString( row.getAs( ZuercherConstants.COUNTY ) );
-        if (StringUtils.isNoneBlank( county )) {
-            return county.trim();
-        }
-
-        return null;
-    }
-    private static String getCounty( Map<String, Object> row ) {
-        String county = Parsers.getAsString( row.get( ZuercherConstants.COUNTY ) );
-        if (StringUtils.isNoneBlank( county )) {
-            return county.trim();
-        }
-
-        return null;
-    }
-
     private static String getBookingDateTime( Row row ) {
-        String county = getCounty( row );
+        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePattern );
 
         String datTimeStr = Parsers.getAsString( row.getAs( ZuercherConstants.BOOKING_DATE_TIME ) );
         if ( county == null || datTimeStr == null ) {
@@ -219,24 +177,11 @@ public class ZuercherInmates {
         }
 
         String dateTimeStr = datTimeStr.trim();
-        return Parsers.getAsString( (county.equals( "Minnehaha County" ) ? minnDTHelper : pennDTHelper).parseDateTime( dateTimeStr ) );
-    }
-
-    private static String getBookingDateTime( Map<String, Object> row ) {
-        String county = getCounty( row );
-
-        String datTimeStr = Parsers.getAsString( row.get( ZuercherConstants.BOOKING_DATE_TIME ) );
-        if ( county == null || datTimeStr == null ) {
-            logger.debug( "Unable to get datetime." );
-            return null;
-        }
-
-        String dateTimeStr = datTimeStr.trim();
-        return Parsers.getAsString( (county.equals( "Minnehaha County" ) ? minnDTHelper : pennDTHelper).parseDateTime( dateTimeStr ) );
+        return Parsers.getAsString( DTHelper.parseDateTime( dateTimeStr ) );
     }
 
     private static Object getSentenceEndDateTime( Row row ) {
-        String county = getCounty( row );
+        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePattern );
 
         String datTimeStr = Parsers.getAsString( row.getAs( ZuercherConstants.SENTENCE_END_DATE_TIME ) );
         if ( county == null || datTimeStr == null ) {
@@ -245,7 +190,7 @@ public class ZuercherInmates {
         }
 
         String dateTimeStr = datTimeStr.trim();
-        return Parsers.getAsString( (county.equals( "Minnehaha County" ) ? minnDTHelper : pennDTHelper).parseDateTime( dateTimeStr ) );
+        return Parsers.getAsString( DTHelper.parseDateTime( dateTimeStr ) );
     }
 
 }
