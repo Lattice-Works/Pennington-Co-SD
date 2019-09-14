@@ -40,7 +40,9 @@ public class ZuercherInmates {
 
         SimplePayload payload = new SimplePayload( inmatesPath );
 
-        final InmateIntegrationConfiguration config = InmateIntegrationConfigurations.CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
+        county = County.valueOf( args[ 3 ] );
+        final InmateIntegrationConfiguration config = InmateIntegrationConfigurations.CONFIGURATIONS.get( county );
+
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
