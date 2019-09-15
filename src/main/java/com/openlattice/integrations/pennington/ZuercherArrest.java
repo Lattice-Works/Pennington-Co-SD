@@ -47,8 +47,9 @@ public class ZuercherArrest {
         final String password = args[ 1 ];
         final String arrestsPath = args[ 2 ];
         String jwtToken = MissionControl.getIdToken( username, password );
+
         SimplePayload payload = new SimplePayload( arrestsPath );
-        final ArrestIntegrationConfiguration config = ArrestIntegrationConfigurations.CONFIGURATIONS.get( args[ 3 ] );
+        final ArrestIntegrationConfiguration config = ArrestIntegrationConfigurations.CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 

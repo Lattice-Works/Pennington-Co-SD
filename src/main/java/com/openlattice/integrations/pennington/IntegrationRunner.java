@@ -23,11 +23,6 @@ public class IntegrationRunner {
 
         switch ( integrationType ) {
 
-
-            case PSAS:
-                ManualPsaIntegration.integrate( requestArgs );
-                break;
-
             case ARRESTS:
                 ZuercherArrest.integrate( requestArgs );
                 break;
@@ -42,6 +37,14 @@ public class IntegrationRunner {
 
             case INMATES:
                 ZuercherInmates.integrate( requestArgs );
+                break;
+
+            case PSAS:
+                ManualPsaIntegration.integrate( requestArgs );
+                break;
+
+            case RELEASES:
+                ZuercherReleases.integrate( requestArgs );
                 break;
 
             default:
