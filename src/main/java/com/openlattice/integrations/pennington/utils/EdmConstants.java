@@ -25,13 +25,12 @@ public class EdmConstants {
     public static final String PENNINGTON_ADDRESS_ENTITY_SET                = "PenZuercherAddress";
     public static final String PENNINGTON_APPEARS_IN_ENTITY_SET             = "Pennington County, SD_app_appearsin";
     public static final String PENNINGTON_APPEARS_IN_ARREST_ENTITY_SET      = "PenZuercherAppearsin";
-    public static final String PENNINGTON_ARREST_BONDS_ENTITY_SET           = "Pennington County, SD_app_arrestbonds";
+    public static final String PENNINGTON_ARREST_BONDS_ENTITY_SET           = "penningtoncountysd_app_arrestbonds";
     public static final String PENNINGTON_ARREST_CHARGES_ENTITY_SET         = "PenZuercherCharge";
     public static final String PENNINGTON_ARRESTED_IN_ENTITY_SET            = "PenZuercherArrests";
     public static final String PENNINGTON_ASSESSED_BY_ENTITY_SET            = "Pennington County, SD_app_assessedby";
-    public static final String PENNINGTON_BOND_SET_ENTITY_SET               = "Pennington County, SD_app_bondset";
-    public static final String PENNINGTON_JAIL_STAY_ENTITY_SET              = "Pennington County, SD_app_jailstay";
-    public static final String PENNINGTON_JAIL_STAY_LENGTH_ENTITY_SET       = "Pennington County, SD_app_jailstaylength";
+    public static final String PENNINGTON_BOND_SET_ENTITY_SET               = "penningtoncountysd_app_bondsetfor";
+    public static final String PENNINGTON_JAIL_STAY_ENTITY_SET              = "penningtoncountysd_app_jailstays";
     public static final String PENNINGTON_CHARGED_WITH_ENTITY_SET           = "PenZuercherchargedwith";
     public static final String PENNINGTON_RCM_RESULTS_ENTITY_SET            = "Pennington County, SD_app_rcm";
     public static final String PENNINGTON_RCM_RISK_FACTORS_ENTITY_SET       = "Pennington County, SD_app_rcmriskfactors";
@@ -45,21 +44,19 @@ public class EdmConstants {
     public static final String PENNINGTON_CALCULATED_FOR_ENTITY_SET         = "Pennington County, SD_app_calculatedfor";
     public static final String PENNINGTON_INCIDENT_ENTITY_SET               = "PenZuercherIncident";
     public static final String PENNINGTON_LIVES_AT_ARREST_ENTITY_SET        = "PenZLivesAt";
-    public static final String PENNINGTON_SUBJECT_OF_ENTITY_SET             = "Pennington County, SD_app_subjectof";
-    public static final String PENNINGTON_LENGTH_OF_ENTITY_SET             = "Pennington County, SD_app_lengthof";
+    public static final String PENNINGTON_SUBJECT_OF_ENTITY_SET             = "penningtoncountysd_app_subjectof";
 
     // Minnehaha Specific
     public static final String MINNEHAHA_ADDRESS_ENTITY_SET                 = "Minnehaha County, SD_app_address";
     public static final String MINNEHAHA_APPEARS_IN_ENTITY_SET              = "Minnehaha County, SD_app_appearsin";
     public static final String MINNEHAHA_APPEARS_IN_ARREST_ENTITY_SET       = "Minnehaha County, SD_app_appearsinarrest";
     public static final String MINNEHAHA_ARREST_CHARGES_ENTITY_SET          = "Minnehaha County, SD_app_arrestcharges";
-    public static final String MINNEHAHA_ARREST_BONDS_ENTITY_SET            = "Minnehaha County, SD_app_arrestbonds";
+    public static final String MINNEHAHA_ARREST_BONDS_ENTITY_SET            = "minnehahacountysd_app_arrestbonds";
     public static final String MINNEHAHA_ARRESTED_IN_ENTITY_SET             = "Minnehaha County, SD_app_arrestedin";
     public static final String MINNEHAHA_ASSESSED_BY_ENTITY_SET             = "Minnehaha County, SD_app_assessedby";
-    public static final String MINNEHAHA_JAIL_STAY_ENTITY_SET               = "Minnehaha County, SD_app_jailstay";
-    public static final String MINNEHAHA_JAIL_STAY_LENGTH_ENTITY_SET        = "Minnehaha County, SD_app_jailstaylength";
+    public static final String MINNEHAHA_JAIL_STAY_ENTITY_SET               = "minnehahacountysd_app_jailstays";
     public static final String MINNEHAHA_ARREST_CHARGED_WITH_ENTITY_SET     = "Minnehaha County, SD_app_arrestchargedwith";
-    public static final String MINNEHAHA_BOND_SET_ENTITY_SET                = "Minnehaha County, SD_app_bondset";
+    public static final String MINNEHAHA_BOND_SET_ENTITY_SET                = "minnehahacountysd_app_bondsetfor";
     public static final String MINNEHAHA_RCM_RESULTS_ENTITY_SET             = "Minnehaha County, SD_app_rcm";
     public static final String MINNEHAHA_RCM_RISK_FACTORS_ENTITY_SET        = "Minnehaha County, SD_app_rcmriskfactors";
     public static final String MINNEHAHA_ARREST_PRETRIAL_CASES_ENTITY_SET   = "Minnehaha County, SD_app_arrestpretrialcases";
@@ -72,20 +69,19 @@ public class EdmConstants {
     public static final String MINNEHAHA_CALCULATED_FOR_ENTITY_SET          = "Minnehaha County, SD_app_calculatedfor";
     public static final String MINNEHAHA_INCIDENT_ENTITY_SET                = "Minnehaha County, SD_app_incident";
     public static final String MINNEHAHA_LIVES_AT_ARREST_ENTITY_SET         = "Minnehaha County, SD_app_livesat_arrest";
-    public static final String MINNEHAHA_SUBJECT_OF_ENTITY_SET              = "Minnehaha County, SD_app_subjectof";
-    public static final String MINNEHAHA_LENGTH_OF_ENTITY_SET               = "Minnehaha County, SD_app_lengthof";
+    public static final String MINNEHAHA_SUBJECT_OF_ENTITY_SET              = "minnehahacountysd_app_subjectof";
 
     // For Todd's Test Org
     public static final String TTO_ADDRESS_ENTITY_SET                   = "tto_app_address";
     public static final String TTO_ASSESSED_BY_ENTITY_SET               = "tto_app_assessedby";
     public static final String TTO_ARREST_PRETRIAL_CASES_ENTITY_SET     = "tto_app_arrestpretrialcases";
     public static final String TTO_ARREST_CHARGES_ENTITY_SET            = "tto_app_arrestcharges";
-    public static final String TTO_ARREST_BONDS_ENTITY_SET              = "toddstestorg_app_arrestbonds_1";
+    public static final String TTO_ARREST_BONDS_ENTITY_SET              = "tto_app_arrestbonds";
     public static final String TTO_BONDS_ENTITY_SET                     = "tto_app_manualbonds";
-    public static final String TTO_BOND_SET_ENTITY_SET                  = "toddstestorg_bondset_app";
+    public static final String TTO_BOND_SET_ENTITY_SET                  = "tto_app_bondsetfor";
     public static final String TTO_RCM_RESULTS_ENTITY_SET               = "tto_app_rcm";
-    public static final String TTO_JAIL_STAY_ENTITY_SET                 = "toddstestorg_app_jailstay";
-    public static final String TTO_JAIL_STAY_LENGTH_ENTITY_SET          = "toddstestorg_app_jailstaylength";
+    public static final String TTO_JAIL_STAY_ENTITY_SET                 = "tto_app_jailstay";
+    public static final String TTO_JAIL_STAY_LENGTH_ENTITY_SET          = "tto_app_jailstaylength";
     public static final String TTO_RCM_RISK_FACTORS_ENTITY_SET          = "tto_app_rcmriskfactors";
     public static final String TTO_PSA_ENTITY_SET                       = "tto_app_psascores";
     public static final String TTO_PSA_RISK_FACTORS_ENTITY_SET          = "tto_app_psariskfactors";
@@ -114,8 +110,8 @@ public class EdmConstants {
     public static final String TTO_APPEARS_IN_ARREST_ENTITY_SET         = "tto_app_appearsinarrest";
     public static final String TTO_REGISTERED_FOR_ENTITY_SET            = "tto_app_registeredfor";
     public static final String TTO_LIVES_AT_ARREST_ENTITY_SET           = "tto_app_livesat_arrest";
-    public static final String TTO_SUBJECT_OF_ENTITY_SET                = "toddstestorg_app_subjectof";
-    public static final String TTO_LENGTH_OF_ENTITY_SET                 = "toddstestorg_app_lengthof";
+    public static final String TTO_SUBJECT_OF_ENTITY_SET                = "tto_app_subjectof";
+    public static final String TTO_LENGTH_OF_ENTITY_SET                 = "tto_app_lengthof";
 
 
     public static final String ADDRESS_FQN              = "location.Address";
