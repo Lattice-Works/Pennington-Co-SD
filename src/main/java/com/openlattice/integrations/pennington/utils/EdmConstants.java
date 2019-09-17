@@ -69,7 +69,7 @@ public class EdmConstants {
     public static final String MINNEHAHA_CALCULATED_FOR_ENTITY_SET          = "Minnehaha County, SD_app_calculatedfor";
     public static final String MINNEHAHA_INCIDENT_ENTITY_SET                = "Minnehaha County, SD_app_incident";
     public static final String MINNEHAHA_LIVES_AT_ARREST_ENTITY_SET         = "Minnehaha County, SD_app_livesat_arrest";
-    public static final String MINNEHAHA_SUBJECT_OF_ENTITY_SET              = "minnehahacountysd_app_subjectof";
+    public static final String MINNEHAHA_SUBJECT_OF_ENTITY_SET              = "minnehahacountysd_app_subjectof_1";
 
     // For Todd's Test Org
     public static final String TTO_ADDRESS_ENTITY_SET                   = "tto_app_address";
@@ -80,7 +80,7 @@ public class EdmConstants {
     public static final String TTO_BONDS_ENTITY_SET                     = "tto_app_manualbonds";
     public static final String TTO_BOND_SET_ENTITY_SET                  = "tto_app_bondsetfor";
     public static final String TTO_RCM_RESULTS_ENTITY_SET               = "tto_app_rcm";
-    public static final String TTO_JAIL_STAY_ENTITY_SET                 = "tto_app_jailstay";
+    public static final String TTO_JAIL_STAY_ENTITY_SET                 = "tto_app_jailstays";
     public static final String TTO_JAIL_STAY_LENGTH_ENTITY_SET          = "tto_app_jailstaylength";
     public static final String TTO_RCM_RISK_FACTORS_ENTITY_SET          = "tto_app_rcmriskfactors";
     public static final String TTO_PSA_ENTITY_SET                       = "tto_app_psascores";
