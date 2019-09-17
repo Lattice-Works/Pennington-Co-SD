@@ -52,6 +52,7 @@ public class ZuercherConstants {
     public static final String ZIP = "ZIP";
 
     // Not From JSON - Values set by us when csv is written
+    public static final String BOND_NUM = "BondNumber";
     public static final String BOND_AMOUNT = "BondAmount";
     public static final String BOND_TYPE = "BondType";
     public static final String BOND_SOURCE = "BondSource";

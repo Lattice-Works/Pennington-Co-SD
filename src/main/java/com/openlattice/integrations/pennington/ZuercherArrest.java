@@ -1,17 +1,14 @@
 package com.openlattice.integrations.pennington;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.data.UpdateType;
-import com.openlattice.integrations.pennington.utils.EdmConstants;
-import com.openlattice.integrations.pennington.utils.IntegrationAliases;
-import com.openlattice.integrations.pennington.utils.ZuercherConstants;
+import com.openlattice.integrations.pennington.configurations.ArrestIntegrationConfiguration;
+import com.openlattice.integrations.pennington.utils.*;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
-import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
 import com.openlattice.shuttle.dates.DateTimeHelper;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
@@ -26,16 +23,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Kim Engie &lt;kim@openlattice.com&gt;
  */
-
-enum County {
-    pennington,
-    minnehaha
-}
 
 public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
@@ -45,35 +36,6 @@ public class ZuercherArrest {
             "MM/dd/YY" );
     private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
             "MM/dd/yy HH:mm" );
-
-    private static final Map<County, IntegrationConfiguration> CONFIGURATIONS = ImmutableMap.of(
-            County.pennington, new IntegrationConfiguration(
-                    EdmConstants.PEOPLE_ENTITY_SET,
-                    "PenZuercherIncident",
-                    "PenZuercherCharge",
-                    "PenZuercherPretrialCase",
-                    "PenZuercherAddress",
-                    EdmConstants.CONTACT_INFO_ENTITY_SET,
-                    "PenZuercherArrests",
-                    "PenZuercherchargedwith",
-                    "PenZuercherAppearsin",
-                    "PenZLivesAt",
-                    EdmConstants.CONTACT_INFO_GIVEN_ENTITY_SET
-            ),
-            County.minnehaha, new IntegrationConfiguration(
-                    "southdakotapeople",
-                    "Minnehaha County, SD_app_incident",
-                    "Minnehaha County, SD_app_arrestcharges",
-                    "Minnehaha County, SD_app_arrestpretrialcases",
-                    "Minnehaha County, SD_app_address",
-                    EdmConstants.CONTACT_INFO_ENTITY_SET,
-                    "Minnehaha County, SD_app_arrestedin",
-                    "Minnehaha County, SD_app_arrestchargedwith",
-                    "Minnehaha County, SD_app_appearsinarrest",
-                    "Minnehaha County, SD_app_livesat_arrest",
-                    EdmConstants.CONTACT_INFO_GIVEN_ENTITY_SET
-            )
-    );
 
 
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
@@ -86,10 +48,8 @@ public class ZuercherArrest {
         final String arrestsPath = args[ 2 ];
         String jwtToken = MissionControl.getIdToken( username, password );
 
-        Payload payload = new SimplePayload( arrestsPath );
-
-        //        SimplePayload payload = new SimplePayload( arrestsPath );
-        final IntegrationConfiguration config = CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
+        SimplePayload payload = new SimplePayload( arrestsPath );
+        final ArrestIntegrationConfiguration config = ArrestIntegrationConfigurations.CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 

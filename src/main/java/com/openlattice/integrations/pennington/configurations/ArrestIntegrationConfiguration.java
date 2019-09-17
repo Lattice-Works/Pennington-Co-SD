@@ -1,6 +1,6 @@
-package com.openlattice.integrations.pennington;
+package com.openlattice.integrations.pennington.configurations;
 
-public class IntegrationConfiguration {
+public class ArrestIntegrationConfiguration {
 
     private final String people;
     private final String incident;
@@ -14,7 +14,7 @@ public class IntegrationConfiguration {
     private final String livesAt;
     private final String contactInformationGiven;
 
-    public IntegrationConfiguration(
+    public ArrestIntegrationConfiguration(
             String people,
             String incident,
             String charge,

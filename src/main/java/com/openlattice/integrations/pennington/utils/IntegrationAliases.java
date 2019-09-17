@@ -3,16 +3,20 @@ package com.openlattice.integrations.pennington.utils;
 public class IntegrationAliases {
 
     public static final String ADDRESS_ALIAS                        = "address";
+    public static final String AGENCY_ALIAS                         = "agency";
     public static final String APPEARS_IN_ALIAS                     = "appearsin";
     public static final String APPEARS_IN_HEARING_ALIAS             = "appearsInHearing";
     public static final String ARRESTED_IN_ALIAS                    = "arrestedin";
     public static final String ARRESTEE_ALIAS                       = "arrestee";
     public static final String ASSESSED_BY_ALIAS                    = "assessedBy";
+    public static final String BOND_ALIAS                           = "bond";
+    public static final String BOND_SET_ALIAS                       = "bondSetFor";
     public static final String CASE_ALIAS                           = "case";
     public static final String CHARGE_ALIAS                         = "charge";
     public static final String CHARGED_WITH_ALIAS                   = "chargedwith";
     public static final String CALCULATED_FOR_ALIAS                 = "calculatedFor";
     public static final String CONTACT_INFO_ALIAS                   = "contactInfo";
+    public static final String CONTACT_INFO_GIVEN_ALIAS             = "contactInfoGivenFor";
     public static final String COUNTY_ALIAS                         = "county";
     public static final String COURTHOUSE_ALIAS                     = "courthouse";
     public static final String COURTROOM_ALIAS                      = "courtroom";
@@ -23,16 +27,21 @@ public class IntegrationAliases {
     public static final String HEARING_APPEARS_IN_COURTHOUSE_ALIAS  = "hearingAppearsInCourthouse";
     public static final String INCIDENT_ALIAS                       = "incident";
     public static final String JUDGE_ALIAS                          = "judge";
+    public static final String JAIL_STAY_ALIAS                      = "jailStay";
+    public static final String LENGTH_OF_ALIAS                      = "lengthOf";
     public static final String LIVES_AT_ALIAS                       = "livesat";
     public static final String MANUAL_PRETRIAL_CASE_ALIAS           = "manualPretrialCase";
     public static final String PERSON_ALIAS                         = "person";
     public static final String PSA_SCORES_ALIAS                     = "psaScores";
+    public static final String PHONE_ALIAS                          = "phone";
     public static final String PSA_RISK_FACTORS_ALIAS               = "dmfRiskFactors";
     public static final String PSA_NOTES_ALIAS                      = "dmfNotes";
     public static final String PRETRIAL_CASE_ALIAS                  = "pretrialcase";
+    public static final String REGISTERED_FOR_ALIAS                 = "registeredFor";
     public static final String RCM_ALIAS                            = "rcmResults";
     public static final String RCM_RISK_FACTORS_ALIAS               = "rcmRiskFactors";
     public static final String STAFF_ALIAS                          = "staff";
+    public static final String SUBJECT_OF_ALIAS                     = "subjectOf";
     public static final String OVERSEES_CASE_ALIAS                  = "overseescase";
     public static final String OVERSEES_HEARING_ALIAS               = "overseeshearing";
 

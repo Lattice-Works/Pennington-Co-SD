@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Kim Engie &lt;kim@openlattice.com&gt;
@@ -46,6 +44,7 @@ public class MinPennHearings {
         final String hearingsPath = args[ 2 ];
         SimplePayload payload = new SimplePayload( hearingsPath );
         String jwtToken = MissionControl.getIdToken( username, password );
+
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
@@ -187,7 +186,7 @@ public class MinPennHearings {
 
     private static String getCourtroomId( Row row ) {
         String countyPrefix = getCountyPrefix( row );
-        String courtroom = row.getAs( IntegrationAliases.COURTROOM_ALIAS );
+        String courtroom = row.getAs( IntegrationAliases.COURTROOM_COL );
         return countyPrefix + "|" + courtroom;
     }
 

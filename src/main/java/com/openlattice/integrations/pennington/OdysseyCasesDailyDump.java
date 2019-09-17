@@ -18,16 +18,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OdysseyCasesDailyDump {
 
     protected static final Logger logger = LoggerFactory.getLogger( OdysseyCasesDailyDump.class );
 
-    public static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PRODUCTION;
+    public static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     private static final DateTimeHelper bdHelper = new DateTimeHelper( DateTimeZone.forOffsetHours( -6 ),
             "yyyy-MM-dd HH:mm:ss" );
@@ -102,8 +100,8 @@ public class OdysseyCasesDailyDump {
         MissionControl missionControl = new MissionControl( environment,
                 () -> jwtToken,
                 "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
-
         missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of()).launch( 150 );
+        MissionControl.succeed();
 
     }
 

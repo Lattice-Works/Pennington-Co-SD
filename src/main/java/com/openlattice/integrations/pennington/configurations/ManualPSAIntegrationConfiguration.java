@@ -1,4 +1,4 @@
-package com.openlattice.integrations.pennington;
+package com.openlattice.integrations.pennington.configurations;
 
 public class ManualPSAIntegrationConfiguration {
 
