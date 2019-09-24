@@ -120,7 +120,7 @@ public class ZuercherInmates {
                 "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
         Map<Flight, Payload> flights = new HashMap<>( 1 );
         flights.put( inmatesFlight, payload );
-        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 150 );
+        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10000 );
         MissionControl.succeed();
     }
 
