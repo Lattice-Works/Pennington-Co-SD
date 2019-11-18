@@ -67,7 +67,7 @@ public class ZuercherInmates {
                 .endEntity()
                 .addEntity( IntegrationAliases.JAIL_STAY_ALIAS )
                 .to( config.getJailStays() )
-                .updateType( UpdateType.Replace )
+                .updateType( UpdateType.PartialReplace )
                 .entityIdGenerator( IntegrationUtils::getInmateID )
                 .addProperty( EdmConstants.OL_ID_FQN, ZuercherConstants.INMATE_NUMBER )
                 .addProperty( EdmConstants.BOOKING_DATE_FQN )
