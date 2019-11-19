@@ -8,11 +8,12 @@ import com.openlattice.integrations.pennington.configurations.ReleaseIntegration
 import com.openlattice.integrations.pennington.utils.*;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
+import com.openlattice.shuttle.MissionParameters;
 import com.openlattice.shuttle.adapter.Row;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
+import com.openlattice.shuttle.payload.CsvPayload;
 import com.openlattice.shuttle.payload.Payload;
-import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class ZuercherReleases {
         final String inmatesPath = args[ 2 ];
         String jwtToken = MissionControl.getIdToken( username, password );
 
-        SimplePayload payload = new SimplePayload( inmatesPath );
+        CsvPayload payload = new CsvPayload( inmatesPath );
 
         county = County.valueOf( args[ 3 ] );
 
@@ -89,7 +90,8 @@ public class ZuercherReleases {
 
         MissionControl missionControl = new MissionControl( environment,
                 () -> jwtToken,
-                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
+                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com",
+                MissionParameters.empty() );
         Map<Flight, Payload> flights = new HashMap<>( 1 );
         flights.put( releaseFlight, payload );
         missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10000 );

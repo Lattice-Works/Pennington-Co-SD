@@ -8,9 +8,10 @@ import com.openlattice.integrations.pennington.utils.EdmConstants;
 import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
+import com.openlattice.shuttle.MissionParameters;
 import com.openlattice.shuttle.dates.DateTimeHelper;
+import com.openlattice.shuttle.payload.CsvPayload;
 import com.openlattice.shuttle.payload.Payload;
-import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class OdysseyCasesDailyDump {
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
         Map<Flight, Payload> flights = Maps.newHashMap();
-        Payload payload = new SimplePayload( filePath );
+        Payload payload = new CsvPayload( filePath );
 
         Flight flight = Flight.newFlight()
                 .createEntities()
@@ -99,7 +100,8 @@ public class OdysseyCasesDailyDump {
         flights.put( flight, payload );
         MissionControl missionControl = new MissionControl( environment,
                 () -> jwtToken,
-                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
+                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com",
+                MissionParameters.empty() );
         missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of()).launch( 10000 );
         MissionControl.succeed();
 

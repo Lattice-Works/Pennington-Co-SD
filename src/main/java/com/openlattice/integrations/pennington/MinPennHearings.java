@@ -8,11 +8,12 @@ import com.openlattice.integrations.pennington.utils.EdmConstants;
 import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
+import com.openlattice.shuttle.MissionParameters;
 import com.openlattice.shuttle.adapter.Row;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
+import com.openlattice.shuttle.payload.CsvPayload;
 import com.openlattice.shuttle.payload.Payload;
-import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,9 +43,8 @@ public class MinPennHearings {
         final String username = args[ 0 ];
         final String password = args[ 1 ];
         final String hearingsPath = args[ 2 ];
-        SimplePayload payload = new SimplePayload( hearingsPath );
+        CsvPayload payload = new CsvPayload( hearingsPath );
         String jwtToken = MissionControl.getIdToken( username, password );
-
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
@@ -162,7 +162,7 @@ public class MinPennHearings {
                 .endAssociations()
                 .done();
 
-        MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
+        MissionControl missionControl = new MissionControl( environment, () -> jwtToken, "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com", MissionParameters.empty() );
         Map<Flight, Payload>  flights = new HashMap<>( 1 );
         flights.put( hearingsflight, payload );
         missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10000 );

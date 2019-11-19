@@ -30,10 +30,11 @@ import com.openlattice.integrations.pennington.utils.EdmConstants;
 import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
+import com.openlattice.shuttle.MissionParameters;
 import com.openlattice.shuttle.Shuttle;
 import com.openlattice.shuttle.adapter.Row;
+import com.openlattice.shuttle.payload.CsvPayload;
 import com.openlattice.shuttle.payload.Payload;
-import com.openlattice.shuttle.payload.SimplePayload;
 import com.openlattice.shuttle.util.Parsers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -497,7 +498,7 @@ public class ReferenceCharges {
 //                flights.put( getLincolnCourtChargeFlight(), new SimplePayload( lincolnCourtChargeFilePath ) );
 
         /* for minnehaha arrest charges*/
-                flights.put( getArrestChargeFlight( LINCOLN_ARREST_CHARGES ), new SimplePayload( lincolnArrestChargeFilePath ) );
+                flights.put( getArrestChargeFlight( LINCOLN_ARREST_CHARGES ), new CsvPayload( lincolnArrestChargeFilePath ) );
 
         //        /* for pennington arrest charges */
         //        //        flights.put( getArrestChargeFlight( PENN_ARREST_CHARGES ), new SimplePayload( penningtonArrestChargeFilePath ) );
@@ -532,7 +533,8 @@ public class ReferenceCharges {
 
         MissionControl missionControl = new MissionControl( environment,
                 () -> jwtToken,
-                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com" );
+                "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com",
+                MissionParameters.empty() );
         missionControl.prepare( flights, false, List.of(), Set.of()).launch( 150 );
         MissionControl.succeed();
 
