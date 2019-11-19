@@ -54,6 +54,7 @@ public class ZuercherReleases {
                 .to( config.getPeople() )
                 .updateType( UpdateType.Merge )
                 .addProperty( EdmConstants.PERSON_ID_FQN, ZuercherConstants.PARTY_ID )
+                .addProperty( EdmConstants.JACKET_NO_FQN, ZuercherConstants.PERSON_JACKET_ID )
                 .addProperty( EdmConstants.LAST_NAME_FQN, ZuercherConstants.LAST_NAME )
                 .addProperty( EdmConstants.FIRST_NAME_FQN, ZuercherConstants.FIRST_NAME )
                 .addProperty( EdmConstants.SSN_FQN, ZuercherConstants.SSN )
