@@ -1,6 +1,7 @@
 package com.openlattice.integrations.pennington;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.data.UpdateType;
@@ -9,7 +10,7 @@ import com.openlattice.integrations.pennington.utils.*;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.MissionParameters;
-import com.openlattice.shuttle.adapter.Row;
+import com.openlattice.shuttle.Row;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.CsvPayload;
@@ -123,7 +124,7 @@ public class ZuercherInmates {
                 MissionParameters.empty() );
         Map<Flight, Payload> flights = new HashMap<>( 1 );
         flights.put( inmatesFlight, payload );
-        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of() ).launch( 10000 );
+        missionControl.prepare( flights, false, ImmutableMap.of(), ImmutableSet.of() ).launch( 10000 );
         MissionControl.succeed();
     }
 

@@ -32,7 +32,7 @@ import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.MissionParameters;
 import com.openlattice.shuttle.Shuttle;
-import com.openlattice.shuttle.adapter.Row;
+import com.openlattice.shuttle.Row;
 import com.openlattice.shuttle.payload.CsvPayload;
 import com.openlattice.shuttle.payload.Payload;
 import com.openlattice.shuttle.util.Parsers;
@@ -535,7 +535,7 @@ public class ReferenceCharges {
                 () -> jwtToken,
                 "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com",
                 MissionParameters.empty() );
-        missionControl.prepare( flights, false, List.of(), Set.of()).launch( 150 );
+        missionControl.prepare( flights, false, ImmutableMap.of(), Set.of()).launch( 150 );
         MissionControl.succeed();
 
     }

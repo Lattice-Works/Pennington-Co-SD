@@ -1,6 +1,7 @@
 package com.openlattice.integrations.pennington;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.openlattice.client.RetrofitFactory;
@@ -102,7 +103,7 @@ public class OdysseyCasesDailyDump {
                 () -> jwtToken,
                 "https://openlattice-media-storage.s3.us-gov-west-1.amazonaws.com",
                 MissionParameters.empty() );
-        missionControl.prepare( flights, false, ImmutableList.of(), ImmutableSet.of()).launch( 10000 );
+        missionControl.prepare( flights, false, ImmutableMap.of(), ImmutableSet.of()).launch( 10000 );
         MissionControl.succeed();
 
     }

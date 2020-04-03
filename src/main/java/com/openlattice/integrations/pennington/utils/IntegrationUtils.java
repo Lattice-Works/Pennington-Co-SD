@@ -1,7 +1,7 @@
 package com.openlattice.integrations.pennington.utils;
 
 import com.google.common.collect.Maps;
-import com.openlattice.shuttle.adapter.Row;
+import com.openlattice.shuttle.Row;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.util.Parsers;

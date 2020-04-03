@@ -10,7 +10,7 @@ import com.openlattice.integrations.pennington.utils.IntegrationAliases;
 import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.MissionParameters;
-import com.openlattice.shuttle.adapter.Row;
+import com.openlattice.shuttle.Row;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.CsvPayload;
@@ -428,7 +428,7 @@ public class ManualPsaIntegration {
                 MissionParameters.empty() );
         Map<Flight, Payload> flights = new HashMap<>( 1 );
         flights.put( psaFlight, payload );
-        missionControl.prepare( flights, false, List.of(), Set.of() ).launch( 150 );
+        missionControl.prepare( flights, false, ImmutableMap.of(), Set.of() ).launch( 150 );
         MissionControl.succeed();
     }
 
