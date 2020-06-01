@@ -31,12 +31,21 @@ import java.util.stream.Collectors;
 public class ManualPsaIntegration {
     private static final Logger                      logger      = LoggerFactory.getLogger( ManualPsaIntegration.class );
     private static final  RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
+    private static final String[] dateTimePatterns = new String[] { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSSSSS" };
+    private static final String[] datePatterns = new String[] { "MM/dd/yyyy" };
 
-    private static final JavaDateTimeHelper dtHelper_MM_dd_yyyy = new JavaDateTimeHelper( TimeZones.America_Denver,
-            "MM/dd/yyyy" );
 
-    private static final JavaDateTimeHelper dtHelper_yyyy_MM_dd_HH_mm_ss = new JavaDateTimeHelper( TimeZones.America_Denver,
-            "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSSSSS" );
+    private static final JavaDateTimeHelper dtHelper_MM_dd_yyyy = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            datePatterns,
+            true
+    );
+
+    private static final JavaDateTimeHelper dtHelper_yyyy_MM_dd_HH_mm_ss = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            dateTimePatterns,
+            true
+    );
 
     private static final Map<County, ManualPSAIntegrationConfiguration> CONFIGURATIONS = ImmutableMap.of(
             County.pennington, new ManualPSAIntegrationConfiguration(

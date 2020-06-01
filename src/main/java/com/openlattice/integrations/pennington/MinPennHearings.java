@@ -32,12 +32,27 @@ public class MinPennHearings {
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     private static final String             dateTimePattern = "MM/dd/yyyy hh:mma";
-    private static final JavaDateTimeHelper pennDTHelper    = new JavaDateTimeHelper( TimeZones.America_Denver,
-            dateTimePattern );
-    private static final JavaDateTimeHelper minnDTHelper    = new JavaDateTimeHelper( TimeZones.America_Chicago,
-            dateTimePattern );
+    private static final String[]           dateTimePatterns = new String[] { dateTimePattern };
 
-    private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper( TimeZones.America_Denver, "MM/dd/yyyy" );
+    private static final String             datePattern = "MM/dd/yyyy";
+    private static final String[]           datePatterns = new String[] { datePattern };
+
+    private static final JavaDateTimeHelper pennDTHelper    = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            dateTimePatterns,
+            true
+    );
+    private static final JavaDateTimeHelper minnDTHelper    = new JavaDateTimeHelper(
+            TimeZones.America_Chicago,
+            dateTimePatterns,
+            true
+    );
+
+    private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            datePatterns,
+            true
+    );
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
 

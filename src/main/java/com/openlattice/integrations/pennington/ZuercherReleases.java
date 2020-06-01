@@ -28,8 +28,12 @@ public class ZuercherReleases {
     private static final RetrofitFactory.Environment environment    = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     public static County county;
-    private static final String dateTimePattern         = "MM/dd/yy HH:mm";
-    private static final JavaDateTimeHelper bdHelper    = new JavaDateTimeHelper( TimeZones.America_Denver,"MM/dd/yy" );
+    private static final String[] dateTimePatterns         = new String[] { "MM/dd/yy HH:mm" };
+    private static final JavaDateTimeHelper bdHelper    = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            dateTimePatterns,
+            true
+        );
 
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
@@ -101,7 +105,7 @@ public class ZuercherReleases {
     }
 
     private static String getReleaseDateTime( Row row ) {
-        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePattern );
+        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePatterns );
 
         String datTimeStr = Parsers.getAsString( row.getAs( ZuercherConstants.RELEASE_DATE ) );
         if ( county == null || datTimeStr == null ) {

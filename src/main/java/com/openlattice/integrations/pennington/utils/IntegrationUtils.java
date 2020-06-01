@@ -40,10 +40,14 @@ public class IntegrationUtils {
         return null;
     }
 
-    public static JavaDateTimeHelper getDtHelperForCounty( County county, String dateTimePattern ) {
+    public static JavaDateTimeHelper getDtHelperForCounty( County county, String[] dateTimePatterns ) {
         Map<County, TimeZone> countyToTimezoneMap = getCountyToTimezoneMap();
         TimeZone timezone = countyToTimezoneMap.get( county );
-        return new JavaDateTimeHelper( timezone, dateTimePattern );
+        return new JavaDateTimeHelper(
+                timezone,
+                dateTimePatterns,
+                true
+        );
     }
 
 
