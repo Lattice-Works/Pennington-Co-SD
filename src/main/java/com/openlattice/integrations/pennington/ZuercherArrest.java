@@ -1,6 +1,5 @@
 package com.openlattice.integrations.pennington;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -12,7 +11,6 @@ import com.openlattice.shuttle.Flight;
 import com.openlattice.shuttle.MissionControl;
 import com.openlattice.shuttle.MissionParameters;
 import com.openlattice.shuttle.Row;
-import com.openlattice.shuttle.dates.DateTimeHelper;
 import com.openlattice.shuttle.dates.JavaDateTimeHelper;
 import com.openlattice.shuttle.dates.TimeZones;
 import com.openlattice.shuttle.payload.CsvPayload;
@@ -33,11 +31,19 @@ import java.util.stream.Collectors;
 public class ZuercherArrest {
     private static final Logger                      logger      = LoggerFactory.getLogger( ZuercherArrest.class );
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
+    private static final String[] DatePatterns = new String[] { "MM/dd/YY" };
+    private static final String[] DateTimePatterns = new String[] { "MM/dd/yy HH:mm" };
 
-    private static final DateTimeHelper     bdHelper = new DateTimeHelper( TimeZones.America_Denver,
-            "MM/dd/YY" );
-    private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper( TimeZones.America_Denver,
-            "MM/dd/yy HH:mm" );
+    private static final JavaDateTimeHelper bdHelper = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            DatePatterns,
+            true
+    );
+    private static final JavaDateTimeHelper dtHelper = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            DateTimePatterns,
+            true
+    );
 
 
     //    private static final Pattern    statuteMatcher = Pattern.compile( "([0-9+]\s\-\s(.+)\s(\((.*?)\))" ); //start with a number followed by anything, even empty string. after dash, at least 1 char, 1 whitespace, 2 parentheses
