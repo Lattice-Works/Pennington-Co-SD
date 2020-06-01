@@ -29,8 +29,13 @@ public class ZuercherInmates {
     private static final RetrofitFactory.Environment environment = RetrofitFactory.Environment.PROD_INTEGRATION;
 
     public static County county;
-    private static final String dateTimePattern         = "MM/dd/yy HH:mm";
-    private static final JavaDateTimeHelper bdHelper    = new JavaDateTimeHelper( TimeZones.America_Denver,"MM/dd/yy" );
+    private static final String[] dateTimePatterns         = new String[] { "MM/dd/yy HH:mm" };
+    private static final String[] datePatterns         = new String[] { "MM/dd/yy" };
+    private static final JavaDateTimeHelper bdHelper    = new JavaDateTimeHelper(
+            TimeZones.America_Denver,
+            datePatterns,
+            true
+    );
 
 
     public static void integrate( String[] args ) throws InterruptedException, IOException {
@@ -172,7 +177,7 @@ public class ZuercherInmates {
     }
 
     private static String getBookingDateTime( Row row ) {
-        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePattern );
+        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePatterns );
 
         String datTimeStr = Parsers.getAsString( row.getAs( ZuercherConstants.BOOKING_DATE_TIME ) );
         if ( county == null || datTimeStr == null ) {
@@ -185,7 +190,7 @@ public class ZuercherInmates {
     }
 
     private static Object getSentenceEndDateTime( Row row ) {
-        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePattern );
+        JavaDateTimeHelper DTHelper = IntegrationUtils.getDtHelperForCounty( county, dateTimePatterns );
 
         String datTimeStr = Parsers.getAsString( row.getAs( ZuercherConstants.SENTENCE_END_DATE_TIME ) );
         if ( county == null || datTimeStr == null ) {
