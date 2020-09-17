@@ -143,6 +143,7 @@ public class EdmConstants {
     public static final String COMPLETED_DATETIME_FQN   = "date.completeddatetime";
     public static final String COMPUTER_CRIME_FQN       = "ol.computerincrime";
     public static final String CONTEXT_FQN              = "general.context";
+    public static final String COURT_DOCKET_FQN         = "ol.courtdocket";
     public static final String COURTROOM_FQN            = "justice.courtroom";
     public static final String CURRENT_V_OFFENSE_FQN    = "psa.CurrentViolentOffense";
 

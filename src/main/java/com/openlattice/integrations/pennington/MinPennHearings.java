@@ -82,6 +82,7 @@ public class MinPennHearings {
                     .entityIdGenerator( row -> Parsers.getAsString( row.get( IntegrationAliases.GENERAL_ID_COL ) ) )
                     .addProperty( EdmConstants.CASE_NO_FQN, IntegrationAliases.GENERAL_ID_COL )
                     .addProperty( EdmConstants.CASE_TYPE_FQN, IntegrationAliases.HEARING_TYPE_COL )
+                    .addProperty( EdmConstants.COURT_DOCKET_FQN, IntegrationAliases.DOCKET_NO_COL )
                     .addProperty( EdmConstants.DATETIME_FQN ).value( MinPennHearings::getDateTimeFromRow ).ok()
                     .addProperty( EdmConstants.COMMENTS_FQN, IntegrationAliases.HEARING_COMMENT_COL )
                     .addProperty( EdmConstants.UPDATE_FQN, IntegrationAliases.UPDATE_TYPE_COL )
