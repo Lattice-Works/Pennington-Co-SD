@@ -61,7 +61,7 @@ public class ZuercherArrest {
 
         final Auth0Configuration auth0Configuration = ResourceConfigurationLoader.loadConfigurationFromResource( "auth0.yaml", Auth0Configuration.class );
         final Auth0Delegate auth0Client = Auth0Delegate.fromConfig( auth0Configuration );
-        String jwtToken = auth0Client.getIdToken( username, password );
+        final String jwtToken = auth0Client.getIdToken( username, password );
 
         final ArrestIntegrationConfiguration config = ArrestIntegrationConfigurations.CONFIGURATIONS.get( County.valueOf( args[ 3 ] ) );
 
