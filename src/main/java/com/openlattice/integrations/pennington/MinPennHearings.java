@@ -3,6 +3,9 @@ package com.openlattice.integrations.pennington;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.openlattice.ResourceConfigurationLoader;
+import com.openlattice.auth0.Auth0Delegate;
+import com.openlattice.authentication.Auth0Configuration;
 import com.openlattice.client.RetrofitFactory;
 import com.openlattice.data.UpdateType;
 import com.openlattice.integrations.pennington.utils.EdmConstants;
@@ -60,7 +63,10 @@ public class MinPennHearings {
         final String password = args[ 1 ];
         final String hearingsPath = args[ 2 ];
         CsvPayload payload = new CsvPayload( hearingsPath );
-        String jwtToken = MissionControl.getIdToken( username, password );
+
+        final Auth0Configuration auth0Configuration = ResourceConfigurationLoader.loadConfigurationFromResource( "auth0.yaml", Auth0Configuration.class );
+        final Auth0Delegate auth0Client = Auth0Delegate.fromConfig( auth0Configuration );
+        String jwtToken = auth0Client.getIdToken( username, password );
 
         logger.info( "Using the following idToken: Bearer {}", jwtToken );
 
