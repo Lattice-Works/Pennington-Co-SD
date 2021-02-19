@@ -1,0 +1,5 @@
+clientId: "nope"
+clientSecret: "nope"
+configurations: []
+domain: "openlattice.auth0.com"
+managementApiUrl: "https://openlattice.auth0.com/api/v2/"
